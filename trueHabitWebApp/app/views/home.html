@@ -1,0 +1,135 @@
+
+<div class="container">
+    <div class="row row-content">
+        <div class="col-xs-12 col-sm-8">
+            <div class="card">
+                <!-- Main card block -start-  with the habits and dates -->
+                <div class="card-block">
+                    <div class="row row-content">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-secondary" ng-click="openAddHabit()">
+                            <span class="glyphicon glyphicon-plus"
+                         aria-hidden="true"></span>
+                         add new habit
+                            </button>
+                        </div>
+                        <div class="col-sm-12">
+                            <p id="monthIndicator"> {{date | date: 'MMM yyyy'}} </p>
+                        </div>
+                    </div>
+
+
+                    <div class="row row-content">
+                        <div class="col-xs-9">
+                            <div class="row row-content">
+                                <div class="col-xs-12">
+
+                                </div>
+                                <div class="col-xs-4">
+                                    <div class="row">
+                                        <div class="col-xs-4">
+                                            
+                                        </div> <!-- this column empty -->
+                                        <div class="col-xs-4 text-center"> M </div>
+                                        <div class="col-xs-4 text-center"> T </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-8">
+                                    <div class="row">
+                                        <div class="col-xs-2 text-center"> W </div>
+                                        <div class="col-xs-2 text-center"> T </div>
+                                        <div class="col-xs-2 text-center"> F </div>
+                                        <div class="col-xs-2 text-center"> S </div>
+                                        <div class="col-xs-2 text-center"> S </div>
+                                        <div class="col-xs-2"></div> <!-- this column empty -->
+                                    </div>
+                                </div>
+                                <div class="col-xs-4">
+                                    <div class="row">
+                                        <div class="col-xs-4"></div> <!-- this column empty -->
+                                        <div class="col-xs-4 text-center"> 10 </div>
+                                        <div class="col-xs-4 text-center"> 11 </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-8">
+                                    <div class="row">
+                                        <div class="col-xs-2 text-center"> 12 </div>
+                                        <div class="col-xs-2 text-center"> 13 </div>
+                                        <div class="col-xs-2 text-center"> 14 </div>
+                                        <div class="col-xs-2 text-center"> 15 </div>
+                                        <div class="col-xs-2 text-center"> 16 </div>
+                                        <div class="col-xs-2"></div> <!-- this column empty -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+
+                            <ul>
+                                <li id="listOfHabits"ng-repeat="habit in allhabits">
+                                    <div class="row">
+                                    <div class="col-xs-1">
+                                            <button type="button" class="btn btn-xs btn-secondary" ng-click="removeHabit(habit._id)">
+                                            <span class="glyphicon glyphicon-trash"
+                                            aria-hidden="true"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-xs btn-secondary" ng-click="reinitializeHabit()">
+                                            <span class="glyphicon glyphicon-remove-circle"
+                                            aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <h3>{{habit.name}}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                
+                                <div class="col-xs-4">
+                                    <div class="row">
+                                        <div class="col-xs-4"></div> <!-- this column empty -->
+                                        <div class="col-xs-4 text-center"> 10 </div>
+                                        <div class="col-xs-4 text-center"> 11 </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-8">
+                                    <div class="row">
+                                        <div class="col-xs-2 text-center"> 12 </div>
+                                        <div class="col-xs-2 text-center"> 13 </div>
+                                        <div class="col-xs-2 text-center"> 14 </div>
+                                        <div class="col-xs-2 text-center"> 15 </div>
+                                        <div class="col-xs-2 text-center"> 16 </div>
+                                        <div class="col-xs-2"></div> <!-- this column empty -->
+                                    </div>
+                                </div>
+
+                                    </div>
+                                </li>
+                            </ul>
+
+                            </div>
+
+
+                        </div>
+                        <div class="col-xs-3">
+                        un peu de texte la
+                        </div>  
+                    </div>                    
+
+                </div>
+                <!-- Main card block -end -->
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-4">
+            <div class="card">
+                <div class="card-block">
+                    This is the card block with the score and streak
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
