@@ -1,0 +1,156 @@
+#%TRUE HABIT 0.1
+	---
+	title: True Habit API
+	baseUri: https://localhost:3443/
+	version: v1
+
+	/users:
+      description: Collection of all Users of the application
+	  	get:
+        description: Get a list of all Users of the application (admin only)
+        queryParameters:
+          username:
+            type: string
+            description: A user's name
+            example: johndoe@gmail.com
+            required: false
+          firstname:
+            type: string
+            description: A user's firstname
+            required: false
+          lastname:
+            type: string
+            description: A user's lastname
+            required: false
+          admin:
+            type: boolean
+            description: User is an admin or not
+            required: false
+        responses:
+          200:
+            body:
+              application/json:
+	  	/{username}:
+        description: The username of one of the User of the application 
+	  		get:
+          description: Get a specific user of the application
+          queryParameters:
+            username:
+              type: string
+              description: A user's name
+              example: johndoe@gmail.com
+              required: true
+          responses:
+            200:
+              body:
+                application/json:
+	  	/register:
+        description: RestAPI endpoint to regist a new user
+	  		post:
+          description: Create a new entry in the collection of Users and register with passport
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      "status": 'Registration Successful'
+                    }
+	  	/login:
+        description: RestAPI endpoint to log in a user
+	  		post:
+          description: Log in a user using Passport
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      "status": 'Login Successful'
+                    }
+	  	/logout:
+        description: RestAPI endpoint to log out a user
+	  		get:
+          description: Log out a user using Passport
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      "status": 'Logout Successful'
+                    }
+	/habit:
+		/{userid}:
+      description: /habit endpoint with a userid parameter
+			get:
+        description: Get the list of all habits from a specific user
+        queryParameters:
+            name:
+              type: string
+              description: A habit's name
+              example: Exercise
+              required: false
+            category:
+              type: string
+              description: A habit's category
+              example: Health
+              required: false
+            daily:
+              type: boolean
+              description: daily or weekly habit
+              required: false
+            userid:
+              type: ObjectId
+              description: the _id of a User
+              example: 345aaseuhf4234oi435h123iu4h134oi435
+              required: true
+        responses:
+          200:
+            body:
+              application/json:
+			post:
+        description: Create a habit for a specific user
+        queryParameters:
+          userid:
+              type: ObjectId
+              description: the _id of a User
+              example: 345aaseuhf4234oi435h123iu4h134oi435
+              required: true
+		/{habitid}: 
+      description: /habit endpoint with a habitid parameter
+			delete:
+        description: delete a single habit with the id habitid 
+        queryParameters:
+          habitid:
+              type: ObjectId
+              description: the _id of a Habit
+              example: 345aaseuhf4234oi435h123iu4h134oi435
+              required: true
+			/stat:
+        description: RestAPI endpoint to deal with the statistics of a habit
+				get:
+          description: Get all the statistics for a given habit
+          queryParameters:
+            habitid:
+              type: ObjectId
+              description: the _id of a Habit
+              example: 345aaseuhf4234oi435h123iu4h134oi435
+              required: true
+				/{statdate}:
+          description: RestAPI endpoint dealing with a specific statistic of a specific habit
+					put:
+            description: Modify or create the statistic for a given date for a specific habit
+            queryParameters:
+              habitid:
+                type: ObjectId
+                description: the _id of a Habit
+                example: 345aaseuhf4234oi435h123iu4h134oi435
+                required: true
+              statdate:
+                type: date
+                description: the date of the statistic to be modified
+                example: ISODate("2017-04-28T01:00:00+01:00")
+                required: true
+ 
+
