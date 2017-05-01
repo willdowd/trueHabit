@@ -14,7 +14,7 @@
                             </button>
                         </div>
                         <div class="col-sm-12">
-                            <p id="monthIndicator"> {{date | date: 'MMM yyyy'}} </p>
+                            <p id="monthIndicator"> {{viewDate | date: 'MMM yyyy'}} </p>
                         </div>
                     </div>
 
@@ -30,36 +30,37 @@
                                         <div class="col-xs-4">
                                             
                                         </div> <!-- this column empty -->
-                                        <div class="col-xs-4 text-center"> M </div>
-                                        <div class="col-xs-4 text-center"> T </div>
+                                        <div class="col-xs-4 text-center" ng-class="{'special-day': isItToday(0) }"> M </div>
+                                        <div class="col-xs-4 text-center" ng-class="{'special-day': isItToday(1) }"> T </div>
                                     </div>
                                 </div>
 
                                 <div class="col-xs-8">
                                     <div class="row">
-                                        <div class="col-xs-2 text-center"> W </div>
-                                        <div class="col-xs-2 text-center"> T </div>
-                                        <div class="col-xs-2 text-center"> F </div>
-                                        <div class="col-xs-2 text-center"> S </div>
-                                        <div class="col-xs-2 text-center"> S </div>
+                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(2) }"> W </div>
+                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(3) }"> T </div>
+                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(4) }"> F </div>
+                                        <!-- <div class="col-xs-2 text-center" ng-class="{'special-day': {{isSaturday}} }"> S </ -->
+                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(5) }"> S</div>
+                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(6) }"> S </div>
                                         <div class="col-xs-2"></div> <!-- this column empty -->
                                     </div>
                                 </div>
                                 <div class="col-xs-4">
                                     <div class="row">
                                         <div class="col-xs-4"></div> <!-- this column empty -->
-                                        <div class="col-xs-4 text-center"> 10 </div>
-                                        <div class="col-xs-4 text-center"> 11 </div>
+                                        <div class="col-xs-4 text-center" ng-class="{'special-day': isItToday(0) }"> {{dayArray[0]}} </div>
+                                        <div class="col-xs-4 text-center" ng-class="{'special-day': isItToday(1) }"> {{dayArray[1]}} </div>
                                     </div>
                                 </div>
 
                                 <div class="col-xs-8">
                                     <div class="row">
-                                        <div class="col-xs-2 text-center"> 12 </div>
-                                        <div class="col-xs-2 text-center"> 13 </div>
-                                        <div class="col-xs-2 text-center"> 14 </div>
-                                        <div class="col-xs-2 text-center"> 15 </div>
-                                        <div class="col-xs-2 text-center"> 16 </div>
+                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(2) }"> {{dayArray[2]}} </div>
+                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(3) }"> {{dayArray[3]}} </div>
+                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(4) }"> {{dayArray[4]}} </div>
+                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(5) }"> {{dayArray[5]}} </div>
+                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(6) }"> {{dayArray[6]}} </div>
                                         <div class="col-xs-2"></div> <!-- this column empty -->
                                     </div>
                                 </div>
@@ -69,8 +70,8 @@
 
                             <ul>
                                 <li id="listOfHabits"ng-repeat="habit in allhabits">
-                                    <div class="row">
-                                    <div class="col-xs-1">
+                                    <div class="row row-habit">
+                                        <div class="col-xs-3">
                                             <button type="button" class="btn btn-xs btn-secondary" ng-click="removeHabit(habit._id)">
                                             <span class="glyphicon glyphicon-trash"
                                             aria-hidden="true"></span>
@@ -80,30 +81,49 @@
                                             aria-hidden="true"></span>
                                             </button>
                                         </div>
-                                        <div class="col-xs-3">
-                                            <h3>{{habit.name}}</h3>
+                                        <div class="col-xs-9">
+                                            <h3 id="habitNameTitle">{{habit.name}}</h3>
+                                        </div>
+                                    
+                                    <div class="col-xs-4">
+                                        <div class="row">
+                                            <div class="col-xs-4"></div> <!-- this column empty -->
+                                            <div class="col-xs-4 text-center">
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'habit-done': isDayPerformed(0) }" ng-click="switchState(habit._id, 0)">10
+                                                </button>
+                                            </div>
+                                            <div class="col-xs-4 text-center">
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'habit-done': isDayPerformed(1) }" ng-click="switchState(habit._id, 1)">10
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                
-                                <div class="col-xs-4">
-                                    <div class="row">
-                                        <div class="col-xs-4"></div> <!-- this column empty -->
-                                        <div class="col-xs-4 text-center"> 10 </div>
-                                        <div class="col-xs-4 text-center"> 11 </div>
-                                    </div>
-                                </div>
 
-                                <div class="col-xs-8">
-                                    <div class="row">
-                                        <div class="col-xs-2 text-center"> 12 </div>
-                                        <div class="col-xs-2 text-center"> 13 </div>
-                                        <div class="col-xs-2 text-center"> 14 </div>
-                                        <div class="col-xs-2 text-center"> 15 </div>
-                                        <div class="col-xs-2 text-center"> 16 </div>
-                                        <div class="col-xs-2"></div> <!-- this column empty -->
+                                    <div class="col-xs-8">
+                                        <div class="row">
+                                            <div class="col-xs-2 text-center">
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'habit-done': isDayPerformed(2) }" ng-click="switchState(habit._id, 2)">10
+                                                </button>
+                                            </div>
+                                            <div class="col-xs-2 text-center">
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'habit-done': isDayPerformed(3) }" ng-click="switchState(habit._id, 3)">10
+                                                </button>
+                                            </div>
+                                            <div class="col-xs-2 text-center">
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'habit-done': isDayPerformed(4) }" ng-click="switchState(habit._id, 4)">10
+                                                </button>
+                                            </div>
+                                            <div class="col-xs-2 text-center">
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'habit-done': isDayPerformed(5) }" ng-click="switchState(habit._id, 5)">10
+                                                </button>
+                                            </div>
+                                            <div class="col-xs-2 text-center">
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'habit-done': isDayPerformed(6) }" ng-click="switchState(habit._id, 6)">10
+                                                </button>
+                                            </div>
+                                            <div class="col-xs-2"></div> <!-- this column empty -->
+                                        </div>
                                     </div>
-                                </div>
 
                                     </div>
                                 </li>

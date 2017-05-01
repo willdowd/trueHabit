@@ -45,6 +45,7 @@ router.route('/:username')
 .get(function(req, res, next) {
   User.findOne({username: req.params.username})
     .populate('habits')
+    .populate('statistics')
     .exec(function (err, user) {
     if (err) next(err);
     res.json(user);

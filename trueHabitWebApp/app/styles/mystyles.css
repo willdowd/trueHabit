@@ -8,6 +8,18 @@
   border-bottom: 1px ridge;
   min-height: 50px;
 }
+.row-habit {
+  margin: 0px auto;
+  padding: 10px 0px;
+  border-bottom: 1px ridge;
+  min-height: 30px;
+}
+.special-day {
+  color: #ff884d;
+}
+.habit-done {
+  color: #99ff99;
+}
 ul {
     padding: 0;
     list-style-type: none;
@@ -95,5 +107,10 @@ body {
 
 #listOfHabits {
   list-style-type: none;
+}
+
+h3 {
+  padding: 0px;
+  margin: 0px;
 }
 

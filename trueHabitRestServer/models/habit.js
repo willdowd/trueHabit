@@ -2,14 +2,10 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-// var repetitionSchema = new Schema({
-//     dailyDays:  {
-//         type: [Boolean]
-//     },
-//     nbPerWeek: Number
-// }, {
-//     timestamps: true
-// });
+var statisticSchema = new Schema({
+    date: Date,
+    value: Number
+});
 
 // create a schema
 var habitSchema = new Schema({
@@ -25,14 +21,16 @@ var habitSchema = new Schema({
         type: Boolean,
         default: true
     },
-    positive: {
-        type: Boolean,
-        default: true
-    },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User' 
-    }
+    },
+    statistics: [statisticSchema]
+    //statistic: {type: Object, default: {}}
+    // statistic: [{
+    //     statDate: Date,
+    //     statVal: Number
+    // }]
 }, {
     timestamps: true
 });

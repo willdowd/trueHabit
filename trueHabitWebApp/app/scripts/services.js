@@ -14,25 +14,60 @@ angular.module('trueHabit')
   var habitFac = {};
   
   habitFac.habitResourceFromUserid = function() {
-    return $resource(baseURL + "habits/:userid", null, {
+    return $resource(baseURL + "habits/:userid:habitid", {userid: "@userid", habitid:"@habitid"}, {
             'update': {
                 method: 'PUT'
             }
         });
-  }
+  };
+
+  habitFac.deleteHabitFromUserId = function(userid, habitid) {
+    var userid = userid;
+    var habitid = habitid;
+    console.log("in method deleteHabitFromUserId in habitFactory with userid: ",userid," and habitid: ",habitid);
+    $resource(baseURL + "habits/:userid/removehabit/:habitid", {userid: "@userid", habitid:"@habitid"})
+    .delete({userid: userid, habitid: habitid});
+  };
 
   habitFac.habitResourceFromHabitid = function() {
-    return $resource(baseURL + "habits/fromhabit/:habitid", null, {
+    return $resource(baseURL + "habits/:habitid", null, {
             'update': {
               method: 'PUT'
             },
             'query':  {method:'GET', isArray:false}
-    })
-  }
+    });
+  };
+
+  // habitFac.habitResourceForGetStat = function() {
+  //   return $resource(baseURL + "habits/:habitid/stat/:statdate", {habitid:"@habitid", statdate: "@statdate"}, {
+  //           'update': {
+  //             method: 'PUT'
+  //           }//,
+  //           //
+  //   });
+  // };
+
+  // habitFac.habitResourceForPutStat = function() {
+  //   return $resource(baseURL + "habits/:habitid/stat/:statdate/val/:statval", {habitid:"@habitid", statdate: "@statdate", statval: "@statval"}, {
+  //           'update': {
+  //             method: 'PUT'
+  //           },
+  //           'query':  {method:'GET', isArray:false}
+  //   });
+  // };
 
   return habitFac;
 
+}])
 
+.factory('statisticFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
+
+        return $resource(baseURL + "habits/:habitid/stat/:statdate", {habitid:"@habitid", statdate: "@statdate"}, {
+            'update': {
+                method: 'PUT'
+            },
+             'query':  {method:'GET', isArray:false}
+        });
 
 }])
 
@@ -148,7 +183,6 @@ angular.module('trueHabit')
     };
     
     authFac.register = function(registerData) {
-        
         $resource(baseURL + "users/register")
         .save(registerData,
            function(response) {
