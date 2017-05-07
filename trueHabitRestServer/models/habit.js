@@ -3,8 +3,14 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var statisticSchema = new Schema({
-    date: Date,
-    value: Number
+    date: {
+        type: String,
+        required: true
+    },
+    value: {
+        type: Number,
+        required: true
+    }
 });
 
 // create a schema

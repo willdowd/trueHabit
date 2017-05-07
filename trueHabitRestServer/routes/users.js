@@ -53,9 +53,11 @@ router.route('/:username')
 });
 
 router.post('/register', function(req, res) {
+    console.log("in register");
     User.register(new User({ username : req.body.username }),
       req.body.password, function(err, user) {
         if (err) {
+            console.log("in register - err");
             return res.status(500).json({err: err});
         }
         if(req.body.firstname) {
@@ -65,6 +67,7 @@ router.post('/register', function(req, res) {
             user.lastname = req.body.lastname;
         }
         user.save(function(err,user) {
+            console.log("in register - save");
             passport.authenticate('local')(req, res, function () {
                 return res.status(200).json({status: 'Registration Successful!'});
             });

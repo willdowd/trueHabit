@@ -1,12 +1,6 @@
 'use strict';
 
 angular.module('trueHabit')
-;
-
-'use strict';
-
-angular.module('trueHabit')
-
 
 .controller('HeaderController', ['$scope', '$state', '$rootScope', 'ngDialog', 'AuthFactory', function ($scope, $state, $rootScope, ngDialog, AuthFactory) {
 
@@ -96,154 +90,185 @@ angular.module('trueHabit')
 
 
 
-.controller('addHabitController', ['$scope', 'ngDialog', '$state', '$localStorage', 'AuthFactory', 'habitFactory', 'statisticFactory', function ($scope, ngDialog, $state, $localStorage, AuthFactory, habitFactory, statisticFactory) {
+.controller('addHabitController', ['$scope', 'moment', 'ngDialog', 'newHabitFactory', 
+    function ($scope, moment, ngDialog, newHabitFactory) {
     
-    // var mydate = new Date();
-    // var mydateyesterday = new Date();
-    // mydateyesterday.setDate(mydateyesterday.getDate()-1);
-    // var myval = 0;
-
-    //var mystats = {myDate, 0};
-    //var mystats2 = {}
-
-    //var myarray = [ [mydate, 0], [mydateyesterday, 0]];
-    //console.log("myarray: ",myarray);
-
-    $scope.newHabit = {
+    var vm = $scope;
+    vm.newHabit = {
         name: 'Floss',
         category: 'Health',
-        daily: true
+        daily: true,
+        statistic: []
     };
-
-    $scope.habitid;
 
     $scope.addNewHabit = function() {
-        console.log('Add to habits', $scope.username, $scope.user_id);
-        habitFactory.habitResourceFromUserid().save({userid: $scope.user_id}, $scope.newHabit, function(response)
-            {
-                $scope.newHabit = response;
-                console.log("new habit created: ",response);
-                $scope.habitid = $scope.newHabit._id;
-
-                console.log('Add default statistic to new habit');
-                var habitid = $scope.habitid;
-                var statdate = new Date();
-
-                $scope.newStatistic = {
-                    date: statdate,
-                    value: 0
-                };
-                statisticFactory.save({habitid: habitid}, $scope.newStatistic,
-                    function(response){
-                        console.log("response to add default stat: ",response);
-                    },
-                    function(response){
-                    }
-                );
-                //addDefaultStatistic();
-            },
-            function(response){
-            });
-        //$scope.newHabit);
-        $scope.newHabit = {
-            name: '',
-            category: '',
-            daily: true,
-            statistic: []
-        };
+        console.log('Add to habits', vm.username, vm.user_id);
+        newHabitFactory.addHabit(vm.newHabit, vm.user_id);
         ngDialog.close();
-        $state.reload();
     };
-
-    // $scope.addDefaultStatistic = function() {
-    //     console.log('Add default statistic to new habit');
-    //     var habitid = $scope.habitid;
-    //     var statdate = new Date();
-
-    //     $scope.newStatistic = {
-    //         date: statdate,
-    //         value: 0
-    //     };
-    //     statisticFactory.post({habitid: habitid, statdate: statdate}, $scope.newStatistic,
-    //         function(response){
-    //             console.log("response to add default stat: ",response);
-    //         },
-    //         function(response){
-    //         }
-    //     );
-    // }
-
-
 }])
 
 // .controller('statisticController', ['$scope', 'ngDialog', '$state', '$localStorage', 'AuthFactory', 'habitFactory', function ($scope, ngDialog, $state, $localStorage, AuthFactory, habitFactory) {
     
-//     $scope.statistic
-
-//     $scope.setNewStat = function() {
-//         console.log('Add to habits', $scope.username, $scope.user_id);
-//         habitFactory.habitResourceFromUserid().save({userid: $scope.user_id}, $scope.newHabit);
-//         $scope.newHabit = {
-//             name: '',
-//             category: '',
-//             daily: true,
-//             positive: true
-//         };
-//         ngDialog.close();
-//         $state.reload();
-//     };
 
 // }])
 
-.controller('HomeController', ['$scope', 'ngDialog', '$state', '$stateParams', '$localStorage', 'AuthFactory', 'habitFactory', 'singleUsersFactory', 'multiUsersFactory',function ($scope, ngDialog, $state, $stateParams, $localStorage, AuthFactory, habitFactory, singleUsersFactory, multiUsersFactory) {
+.controller('HomeController', ['$scope', '$rootScope', 
+    'moment', 'ngDialog', '$state', '$stateParams', 
+    '$localStorage', 'AuthFactory', 'habitFactory', 
+    'singleUsersFactory', 'multiUsersFactory', 'statisticFactory',
+    'calendarFactory', 'mapFactory', //'habitStateFactory',
+    'statDateFactory', 
+    function ($scope, $rootScope, 
+        moment, ngDialog, $state, $stateParams, 
+        $localStorage, AuthFactory, habitFactory, 
+        singleUsersFactory, multiUsersFactory, statisticFactory,
+        calendarFactory, mapFactory, //habitStateFactory,
+        statDateFactory) {
     
-    $scope.date = new Date();
+    var anydate = new Date();
+
+    $scope.today = moment().startOf('day').format();
     $scope.username = AuthFactory.getUsername();
     $scope.message = "no message";
     $scope.user_id;
-    $scope.realDateArray = [];
-    $scope.dayArray = [0,0,0,0,0,0,0];
-    $scope.viewDate = $scope.date;
-    $scope.showId = false;
 
-    $scope.isToday = [false, false, false, false, false, false, false];
+
+    calendarFactory.compileViewDates();
+    $scope.realDateArray = calendarFactory.realDateArr;
+    $scope.displayDateArray = calendarFactory.displayDateArr;
+    $scope.isToday = calendarFactory.isTodayArr;
+
+
+    $scope.firsthabit = [0, 0, 0, 0, 0, 0, 0];
+
     
-    $scope.dayPerformed = [false, false, false, false, false, false, false];
-
-    $scope.statPerHabitPerDay = [ {} ]
-
-    $scope.dayArray = compileCurrentDate();
-    
-    $scope.isItToday = function(val)
-    {
-        switch(val)
-        {
-            case 0: return $scope.isToday[0]; break;
-            case 1: return $scope.isToday[1]; break;
-            case 2: return $scope.isToday[2]; break;
-            case 3: return $scope.isToday[3]; break;
-            case 4: return $scope.isToday[4]; break;
-            case 5: return $scope.isToday[5]; break;
-            case 6: return $scope.isToday[6]; break;
-        }
-    }
-
-    $scope.isDayPerformed = function (habitid, dayNb) {
-        //console.log("isDayPerformed - habitid",habitid);
-        //console.log("isDayPerformed - dayNb",dayNb);
-        return false;
-
-        // switch(val)
-        // {
-        //     case 0: return $scope.dayPerformed[0]; break;
-        //     case 1: return $scope.dayPerformed[1]; break;
-        //     case 2: return $scope.dayPerformed[2]; break;
-        //     case 3: return $scope.dayPerformed[3]; break;
-        //     case 4: return $scope.dayPerformed[4]; break;
-        //     case 5: return $scope.dayPerformed[5]; break;
-        //     case 6: return $scope.dayPerformed[6]; break;
-        // }
+    $scope.isDayPerf = function (habitid, dayNb) {
+        
+        return value = mapFactory.getPerfData(habitid, dayNb);
+        //if(value == 0) return false;
+        //if(value == 1) return true;
     };
+
+    $rootScope.$on('recomputeDaysPerf', function () {
+        
+        console.log("RECOMPUTE DAYS PERF");
+        
+        for (var i = 0; i < $scope.allhabits.length; i++){
+                var obj = $scope.allhabits[i];
+                //$scope.toRecompute[obj._id] = false;
+                for (var dn = 0; dn < 7; dn++){
+
+                    var myhabitid = obj._id;
+                    var myhabitdate = dn;
+                    var myhabitkey = mapFac.makeKey(myhabitid,myhabitdate);
+
+                    var statdate = statDateFactory.makeStatDate($scope.realDateArray[dn]);
+                    
+                    statisticFactory.getStatistic().query({habitid: myhabitid, statdate: statdate},
+                        function(response){
+                            //console.log("GOT ANSWER! VALUE: ",response.value, " FOR HABITKEY ", myhabitkey)
+                            //$scope.dayPerformed.set(myhabitkey, response.value);
+                            mapFac.pushPerfData(myhabitid, dn, response.value);
+                        },
+                        function(response){
+                            $scope.message = "Error: " + response.status + " " + response.statusText;
+                        }
+                    );
+                    //console.log("",);
+                }
+            }
+        //$scope.loggedIn = AuthFactory.isAuthenticated();
+        //$scope.username = AuthFactory.getUsername();
+    });
+    //$rootScope.$on('recomputeDaysPerf',function(){
+    //    console.log("RECOMPUTE DAYS PERF");
+        // for (var i = 0; i < $scope.allhabits.length; i++){
+        //         var obj = $scope.allhabits[i];
+        //         //$scope.toRecompute[obj._id] = false;
+        //         for (var dn = 0; dn < 7; dn++){
+
+        //             var myhabitid = obj._id;
+        //             var myhabitdate = dn;
+        //             var myhabitkey = myhabitid.toString()+myhabitdate.toString();
+
+        //             var momentdate = moment($scope.realDateArray[dn])
+        //                 .startOf('day')
+        //                 .format("YYYY/MM/DD");
+
+        //             var statdate = momentdate.toString();
+        //             statisticFactory.getStatistic().query({habitid: myhabitid, statdate: statdate},
+        //                 function(response){
+        //                     //console.log("GOT ANSWER! VALUE: ",response.value, " FOR HABITKEY ", myhabitkey)
+        //                     $scope.dayPerformed.set(myhabitkey, response.value);
+        //                 },
+        //                 function(response){
+        //                     $scope.message = "Error: " + response.status + " " + response.statusText;
+        //                 }
+        //             );
+        //             //console.log("",);
+        //         }
+        //     }
+    //}
+        // if($scope.recomputeDayPerformed)
+        // {
+        //     for (var i = 0; i < $scope.allhabits.length; i++){
+                
+        //         var obj = $scope.allhabits[i];
+
+        //         //$scope.toRecompute[obj._id] = false;
+        //         for (var dn = 0; dn < 7; dn++){
+
+        //             var myhabitid = obj._id;
+        //             var myhabitdate = dn;
+        //             var myhabitkey = habitid.toString()+myhabitdate.toString();
+
+        //             var momentdate = moment($scope.realDateArray[dn])
+        //                 .startOf('day')
+        //                 .format("YYYY/MM/DD");
+
+        //             var statdate = momentdate.toString();
+        //             statisticFactory.getStatistic().query({habitid: myhabitid, statdate: statdate},
+        //                 function(response){
+        //                     //console.log("GOT ANSWER! VALUE: ",response.value, " FOR HABITKEY ", myhabitkey)
+        //                     $scope.dayPerformed.set(myhabitkey, response.value);
+        //                 },
+        //                 function(response){
+        //                     $scope.message = "Error: " + response.status + " " + response.statusText;
+        //                 }
+        //             );
+        //             //console.log("",);
+        //         }
+        //     }
+        //     $scope.recomputeDayPerformed = false;
+        // }
+        
+
+
+        // console.log("isDayPerformed - habitid",habitid);
+        // console.log("isDayPerformed - dayNb",dayNb);
+        
+        // var momentdate = moment($scope.realDateArray[dayNb])
+        //     .startOf('day')
+        //     .format("YYYY/MM/DD");
+
+        // var statdate = momentdate.toString();
+
+        // var resource = statisticFactory.getStatistic();
+
+        // resource.query({habitid: habitid, statdate: statdate},
+        //     function(response){
+        //         return response.value;
+        //     },
+        //     function(response){
+        //         $scope.message = "Error: " + response.status + " " + response.statusText;
+        //         return false;
+        //     }
+        // );
+    //};
+
+
+
     $scope.allusers = multiUsersFactory.query(
         function(response){
 
@@ -256,8 +281,6 @@ angular.module('trueHabit')
     singleUsersFactory.query({username: $scope.username},
         function(response){
             $scope.user_id = response._id;
-            $scope.showId = true;
-            //console.log("Let us try to log the habits of this user: ",response.habits);
             $scope.allhabits = response.habits;
         },
         function(response){
@@ -274,144 +297,150 @@ angular.module('trueHabit')
             template: 'views/removeHabitModal.html',
             className: 'ngdialog-theme-default'
         }).then(function () {
-            console.log("removeHabit has been called with habit: ",habitid," and user_id: ",$scope.user_id);
-            //habitFactory.habitResourceFromUserid().delete({userid: $scope.user_id, habitid: habitid});
             habitFactory.deleteHabitFromUserId($scope.user_id, habitid);
-            $state.reload();
         }, function () {
         });
     };
-$scope.user_id;
-
-    function compileCurrentDate() {
-        var displayDateArray = [0,0,0,0,0,0,0];
-        var index = -1;
-        switch($scope.date.getDay()){
-            case 0:
-                displayDateArray[6] = $scope.date.getDate();
-                $scope.realDateArray[6]= new Date();
-                index = 6;
-                $scope.isToday[6] = true;
-                break;
-            case 1:
-                displayDateArray[0] = $scope.date.getDate();
-                $scope.realDateArray[0]= new Date();
-                index = 0;
-                $scope.isToday[0] = true;
-                break;
-            case 2:
-                displayDateArray[1] = $scope.date.getDate();
-                $scope.realDateArray[1]= new Date();
-                index = 1;
-                $scope.isToday[1] = true;
-                break;
-            case 3:
-                displayDateArray[2] = $scope.date.getDate();
-                $scope.realDateArray[2]= new Date();
-                index = 2;
-                $scope.isToday[2] = true;
-                break;
-            case 4:
-                displayDateArray[3] = $scope.date.getDate();
-                $scope.realDateArray[3]= new Date();
-                index = 3;
-                $scope.isToday[3] = true;
-                break;
-            case 5:
-                displayDateArray[4] = $scope.date.getDate();
-                $scope.realDateArray[4]= new Date();
-                index = 4;
-                $scope.isToday[4] = true;
-                break;
-            case 6:
-                displayDateArray[5] = $scope.date.getDate();
-                $scope.realDateArray[5]= new Date();
-                index = 5;
-                $scope.isToday[5] = true;
-                break;
-        }
-        //console.log("displayDateArray before the processing: ",displayDateArray);
-        var theArray = processDateArray(index, displayDateArray);
-        //console.log("displayDateArray after the processing: ",theArray);
-        //console.log("display REAL DateArray after the processing: ",$scope.realDateArray);
-        return theArray;
-    };
-
-    function processDateArray(ind, arr) {
-        var currDate = new Date();
-        //console.log("currDate: ",currDate);
-        var currminusDate = new Date();
-        currminusDate.setDate(currminusDate.getDate() - 1);
-        //console.log("currminusDate: ",currminusDate);
-        
-        var h = -1;
-        if(ind != 0){
-            for(var i=ind-1;i>=0;i--)
-            {
-                h=ind-i;
-                //console.log("i: ",i," h: ",h);
-                var current = new Date();
-                current.setDate(current.getDate()-h);
-                arr[i]=current.getDate();
-                $scope.realDateArray[i]=current;
-            }
-        }
-        if(ind !=6){
-            for(var i=ind+1;i<=6;i++)
-            {
-                h=i-ind;
-                //console.log("2eme phase: h: ",h," i: ",i);
-                var current = new Date();
-                current.setDate(current.getDate()+h);
-                arr[i]=current.getDate();
-                $scope.realDateArray[i]=current;
-            }
-        }
-         return arr;
-    }
 
 
     $scope.switchState = function(habitid, dayNb){
-        // var statdate = new Date();
-        // var statvalue = 0;
-        // var statval = 0;
-        
-        // console.log("try to get the habit stat with habitResourceForGetStat");
-        // var habitstats = habitFactory.habitResourceForGetStat().get({habitid: habitid},
+
+        // var momentdate = moment($scope.realDateArray[dayNb])
+        //     .startOf('day')
+        //     .format("YYYY/MM/DD");
+        // if(momentdate != undefined)
+        //     var statdate = momentdate.toString();
+
+        var statdate = statDateFactory.makeStatDate($scope.realDateArray[dayNb]);
+        console.log("SWITCH_STATE: statdate from statDateFactory: ",statdate);
+
+        var currValue = mapFactory.getPerfData(habitid, dayNb);
+        if (currValue == 0 || currValue == undefined){
+            newValue = 1;
+        }
+        if (currValue == 1){
+            newValue = 0;
+        }
+        var newStatistic = {
+            date: statdate,
+            value: newValue
+        };
+        //habitStateFactory.switchState(habitid, statdate, newValue);
+        statisticFactory.getStatistic().update({habitid: habitid, statdate: statdate}, newStatistic,
+            function(response){
+                console.log("--> SWITCH_STATE - value: ",response.value," - date: ",statdate);
+                mapFactory.pushPerfData(habitid, dayNb, response.value);
+                mapFactory.mafunctionadoree();
+                //$scope.firsthabit[0] = response.value;
+                //console.log("specificKey: ", specificKey);
+                    //$scope.performanceMap.set(mapkey,response.value);
+                //$rootScope.$broadcast('recomputeDaysPerf');
+                //$scope.recomputeDayPerformed = true;
+                $state.reload();
+            },
+            function(response){
+            }
+        );
+
+
+        // var resource = statisticFactory.getStatistic();
+        // var currentValue = -1;
+
+        // resource.query({habitid: habitid, statdate: statdate},
         //     function(response){
-        //         console.log("successfully called habitReousrceForGetStat, response is: ",response);
-        //         if (response != undefined){
-        //             console.log("response: ",response);
-        //             statvalue = response[statdate];
-        //         }
-        //         console.log("after habitResourceForGetStat - statvalue: ",statvalue);
+        //         console.log("SWITCH_STATE - value: ",response.value," - date: ",statdate);
+        //         currentValue = response.value;
+        //         var newValue = -1;
+        //         if (currentValue == 0) newValue = 1;
+        //         if (currentValue == 1) newValue = 0;
 
-        //         if (statvalue == 0){ 
-        //             statval=1;
-        //         }
+        //         var newStatistic = {
+        //             date: statdate,
+        //             value: newValue
+        //         };
 
-        //         console.log('put stat in habit with date', statdate);
-        //         console.log('put stat in habit with val ', statval);
-        //         console.log('put stat in habit with habitid: ',habitid);
-        //         habitFactory.habitResourceForPutStat().update({habitid: habitid,statdate: statdate, statval: statval},
+        //         statisticFactory.getStatistic().update({habitid: habitid, statdate: statdate}, newStatistic,
         //             function(response){
-        //                 statvalue = response;
-        //                 console.log("stat value after the put: ",statvalue);
+        //                 console.log("--> SWITCH_STATE - value: ",response.value," - date: ",statdate);
+                        
+        //                 //$scope.firsthabit[0] = response.value;
+        //                 var specificKey = habitid.toString()+dayNb.toString();
+        //                 //console.log("specificKey: ", specificKey);
+        //                 $scope.performanceMap.set(specificKey,response.value);
+        //                 //$rootScope.$broadcast('recomputeDaysPerf');
+        //                 //$scope.recomputeDayPerformed = true;
         //             },
         //             function(response){
-
         //             }
         //         );
         //     },
         //     function(response){
+        //         $scope.message = "Error: " + response.status + " " + response.statusText;
+        //     }
+        // );
+        // var momentdate = moment($scope.realDateArray[dayNb])
+        //     .startOf('day')
+        //     .format("YYYY/MM/DD");
+        // if(momentdate != undefined)
+        //     var statdate = momentdate.toString();
 
+        // var resource = statisticFactory.getStatistic();
+        // var currentValue = -1;
+
+        // resource.query({habitid: habitid, statdate: statdate},
+        //     function(response){
+        //         console.log("SWITCH_STATE - value: ",response.value," - date: ",statdate);
+        //         currentValue = response.value;
+        //         var newValue = -1;
+        //         if (currentValue == 0) newValue = 1;
+        //         if (currentValue == 1) newValue = 0;
+
+        //         var newStatistic = {
+        //             date: statdate,
+        //             value: newValue
+        //         };
+
+        //         statisticFactory.getStatistic().update({habitid: habitid, statdate: statdate}, newStatistic,
+        //             function(response){
+        //                 console.log("--> SWITCH_STATE - value: ",response.value," - date: ",statdate);
+                        
+        //                 //$scope.firsthabit[0] = response.value;
+        //                 var specificKey = habitid.toString()+dayNb.toString();
+        //                 //console.log("specificKey: ", specificKey);
+        //                 $scope.performanceMap.set(specificKey,response.value);
+        //                 //$rootScope.$broadcast('recomputeDaysPerf');
+        //                 //$scope.recomputeDayPerformed = true;
+        //             },
+        //             function(response){
+        //             }
+        //         );
+        //     },
+        //     function(response){
+        //         $scope.message = "Error: " + response.status + " " + response.statusText;
         //     }
         // );
 
         
 
         //$state.reload();
-    }
+    };
+
+
+
+    $scope.isItToday = function(val)
+    {
+        console.log("IN IS IT TODAY");
+        switch(val)
+        {
+            case 0: return $scope.isToday[0];
+            case 1: return $scope.isToday[1];
+            case 2: return $scope.isToday[2];
+            case 3: return $scope.isToday[3];
+            case 4: return $scope.isToday[4];
+            case 5: return $scope.isToday[5];
+            case 6: return $scope.isToday[6];
+        }
+    };
 
     
 }])

@@ -35,8 +35,6 @@ habitRouter.route('/:userid')
 })
 
 .post(function (req, res, next) {
-    //var todaydate = new Date();
-    //req.body.statistic[todaydate] = 0;
     Habits.create(req.body, function (err, habit) {
         if (err) next(err);
         console.log('Habit created, now updating owner!');
@@ -47,10 +45,6 @@ habitRouter.route('/:userid')
                 theuser.habits.push(new ObjectID(id));
                 theuser.save(function(err){
                     if (err) next(err);
-                    // res.writeHead(200, {
-                    //     'Content-Type': 'text/plain'
-                    // });
-                    //res.end('Added the habit with id: ' + id);
                     res.json(habit);
                 });
         });
@@ -66,7 +60,6 @@ habitRouter.route('/:userid/removehabit/:habitid')
     .exec(function(err, theuser){
         if (err) next(err);
         
-
         console.log("habits: ",theuser.habits);
         theuser.habits.forEach(function(elm,idx){
             if (elm._id==req.params.habitid){
@@ -78,48 +71,20 @@ habitRouter.route('/:userid/removehabit/:habitid')
                     if (err) next(err);
                     res.json(resp);
                 });
-                
-                // Users.findById(req.params.userid, function(err, theusertwo){
-                //     if (err) next(err);
-                //     console.log("habits usertwo: ",theusertwo.habits);
-                //     theusertwo.habits.splice(thegoalid,1);
-
-                //     Users.findById(req.params.userid, function(err, theuserthree){
-                //     if (err) next(err);
-                //     console.log("habits userthree: ",theuserthree.habits);
-
-                    
-                    
-                // });
-
-                // });
-
 
             }
         });
-
 
     })
     
 });
 
-// habitRouter.route('/:habitid')
-
-// .delete(function (req, res, next) {
-//     Habits.findByIdAndRemove(req.params.habitid, function (err, resp) {
-//         if (err) next(err);
-
-//         res.json(resp);
-//     });
-// });
-
-habitRouter.route('/:habitid/stat')
+habitRouter.route('/:habitid/statistic')
 
 .get(function(req, res, next){
     Habits.findById(req.params.habitid, function(err, habit){
         if (err) next(err);
-        console.log("get habit stat - retrieved habit by id");
-        console.log("return the stats: ",habit.statistic);
+        console.log("get habit statistics - retrieved habit by id");
         if (habit.statistic.length != 0)
             res.json(habit.statistic);
         else{
@@ -131,13 +96,9 @@ habitRouter.route('/:habitid/stat')
 })
 
 .post(function(req, res, next){
-    console.log("in post habit stat with stat date and stat body");
+    console.log("POST STAT CALLED");
     Habits.findById(req.params.habitid,function(err, habit){
         if (err) next(err);
-        console.log("found the habit: ",habit);
-        console.log("now pushing the stat");
-        console.log("with statdate: ",req.body.statdate);
-        console.log("with statval: ", req.body.statval);
         habit.statistics.push(req.body);
         habit.save(function(err, habit){
             if (err) next(err);
@@ -147,42 +108,130 @@ habitRouter.route('/:habitid/stat')
     });
 });
 
-//habitRouter.route('/:habitid/stat/:statdate')
+habitRouter.route('/:habitid/statistic/:statdate')
 
-//.post(function(req, res, next){
-    // console.log("in post habit stat with stat date and stat body");
-    // Habits.findById(req.params.habitid,function(err, habit){
+.get(function(req, res, next){
+    console.log("-- -- -- GET STAT CALLED: ",req.params.statdate);
+    var cursor = Habits.findById(req.params.habitid)
+    .populate('statistics')
+    .cursor();
+
+    cursor.next().then(function(habit){
+        var found = false;
+
+        for (var i = (habit.statistics.length - 1); i >= 0; i--) {
+            if (habit.statistics[i].date.localeCompare(req.params.statdate) == 0){
+                found = true;
+                console.log("--- habit found: value: ",habit.statistics[i].value," and date: ",habit.statistics[i].date);
+                res.json(habit.statistics[i]);
+                i=0;
+            }
+        }
+        if (!found)
+        {
+            console.log("STATISTIC NOT FOUND - ASSUMING 0 - ADDING STAT");
+            var dateval = (req.params.statdate).toString();
+            var newstat = {
+                date: dateval,
+                value: 0
+            };
+            habit.statistics.push(newstat);
+            res.json(newstat);
+            habit.save(function(err, habit){
+                if (err) next(err);
+                console.log("updated habit with new stat");
+                // res.writeHead(200, {
+                //     'Content-Type': 'text/plain'
+                // });
+                //res.write(newstat.value);
+            });
+        }
+        }
+        // var mastat = habit.statistics.statdate;
+        // console.log("la stat a retourner: ",mastat);
+        // res.json(habit.statistics[req.params.commentId]);
+        // console.log("habit.statistic with right date: ",habit.statistics[statdate]);
+
+    );
+
+    // Habits.findById(req.params.habitid, function(err, habit){
     //     if (err) next(err);
     //     console.log("found the habit: ",habit);
-    //     console.log("now pushing the stat");
-    //     console.log("with statdate: ",req.body.statdate);
-    //     console.log("with statval: ", statval);
-    //     habit.statistics.push(req.body);
-    //     habit.save(function(err, habit){
-    //         if (err) next(err);
-    //         console.log("updated habit with new stat");
-    //         res.json(habit);
-    //     })
-    // });
-//});
+    //     habit.statistics.
+    // }
 
-//     Habits.findById(req.params.habitid, function(err, habit){
-//         if (err) next(err);
-//         console.log("post habit stat - retrieved habit by id");
-//         console.log("the map first looks like: ",habit.statistic);
-//         var val = habit.statistic[req.params.statdate];
-//         console.log("the value read in statistic is: ",val);
-//         var newval = 0;
-//         if(val == 0){newval = 1;}
-//         console.log("the value of the newval is: ",newval);
-//         habit.statistic[req.params.statdate] =  0 ;
+})
 
-//         habit.markModified('statistic');
-//         habit.save(function(err){
-//             if(err) next(err);
-//         });
-//         console.log("the map now looks like: ",habit.statistic);
-//     })
+.put(function(req, res, next){
+    console.log("-- -- -- PUT STAT CALLED: ",req.params.statdate," - new value: ",req.body.value);
+    var cursor = Habits.findById(req.params.habitid)
+    .populate('statistics')
+    .cursor();
+
+    cursor.next().then(function(habit){
+        var found = false;
+
+        for (var i = (habit.statistics.length - 1); i >= 0; i--) {
+            if (habit.statistics[i].date.localeCompare(req.params.statdate) == 0){
+                habit.statistics[i] = req.body;
+                habit.save(function(err, habit){
+                    if (err) next(err);
+                    console.log("the stat has been updated and habit is saved");
+                    res.json(req.body);
+                });
+                found = true;
+                i=0;
+            }
+        }
+        if (!found)
+        {
+            console.log("STATISTIC NOT FOUND - ERROR");
+        }
+    });
+});
+
+// .post(function(req, res, next){
+//     console.log("get specific");
+//     var cursor = Habits.findById(req.params.habitid)
+//     .populate('statistics')
+//     .cursor();
+
+//     cursor.next().then(function(habit){
+//         console.log("habit retrieved from cursor: ",habit);
+//         console.log("statdate param: ",req.params.statdate);
+//         var found = false;
+
+//         for (var i = (habit.statistics.length - 1); i >= 0; i--) {
+//             console.log("habit.statistics[i].date: ",habit.statistics[i].date);
+//             if (habit.statistics[i].date.localeCompare(req.params.statdate) == 0){
+//                 console.log("FOUND THE STAT");
+//                 var statval = habit.statistics[i].value;
+//                 if (statval == 0)
+//                 {
+//                     habit.statistics[i].value
+//                 }
+//                 found = true;
+//                 res.json(habit.statistics[i]);
+//                 i=0;
+//             }
+//         }
+//         if (!found)
+//         {
+//             console.log("STATISTIC NOT FOUND - ASSUMING 0 - ADDING STAT");
+//             var dateval = (req.params.statdate).toString();
+//             var newstat = {
+//                 date: dateval,
+//                 value: 0
+//             };
+//             habit.statistics.push(newstat);
+//             res.json(newstat);
+//             habit.save(function(err, habit){
+//                 if (err) next(err);
+//                 console.log("updated habit with new stat");
+//             });
+//         }
+//         }
+//     );
 // });
 
 module.exports = habitRouter; 
