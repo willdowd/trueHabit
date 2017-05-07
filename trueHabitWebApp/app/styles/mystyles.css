@@ -17,9 +17,13 @@
 .special-day {
   color: #ff884d;
 }
-.habit-done {
-  color: #99ff99;
+.isdone {
+  color: green;
 }
+.isnotdone {
+  color: red;
+}
+
 ul {
     padding: 0;
     list-style-type: none;

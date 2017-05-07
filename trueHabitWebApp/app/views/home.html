@@ -89,13 +89,12 @@
                                         <div class="row">
                                             <div class="col-xs-4"></div> <!-- this column empty -->
                                             <div class="col-xs-4 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-click="switchState(habit._id, 0)">{{isDayPerf(habit._id,0)}}
+
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,0), 'isnotdone': !isdone(habit._id, 0)}" ng-click="switchState(habit._id, 0)">{{isDayPerf(habit._id,0)}}
                                                 </button>
                                             </div>
                                             <div class="col-xs-4 text-center">
-                                                <!-- <button type="button" class="btn btn-xs btn-outline" ng-class="{'habit-done': isDayPerformed(habit._id, 1) }" ng-click="switchState(habit._id, 1)">10
-                                                </button> -->
-                                                <button type="button" class="btn btn-xs btn-outline" ng-click="switchState(habit._id, 1)">{{isDayPerf(habit._id,1)}}
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,1), 'isnotdone': !isdone(habit._id, 1)}"  ng-click="switchState(habit._id, 1)">{{isDayPerf(habit._id,1)}}
                                                 </button>
                                             </div>
                                         </div>
@@ -104,23 +103,23 @@
                                     <div class="col-xs-8">
                                         <div class="row">
                                             <div class="col-xs-2 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-click="switchState(habit._id, 2)">{{isDayPerf(habit._id,2)}}
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,2), 'isnotdone': !isdone(habit._id, 2)}"  ng-click="switchState(habit._id, 2)">{{isDayPerf(habit._id,2)}}
                                                 </button>
                                             </div>
                                             <div class="col-xs-2 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-click="switchState(habit._id, 3)">{{isDayPerf(habit._id,3)}}
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,3), 'isnotdone': !isdone(habit._id, 3)}"  ng-click="switchState(habit._id, 3)">{{isDayPerf(habit._id,3)}}
                                                 </button>
                                             </div>
                                             <div class="col-xs-2 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-click="switchState(habit._id, 4)">{{isDayPerf(habit._id,4)}}
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,4), 'isnotdone': !isdone(habit._id, 4)}"  ng-click="switchState(habit._id, 4)">{{isDayPerf(habit._id,4)}}
                                                 </button>
                                             </div>
                                             <div class="col-xs-2 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-click="switchState(habit._id, 5)">{{isDayPerf(habit._id,5)}}
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,5), 'isnotdone': !isdone(habit._id, 5)}"  ng-click="switchState(habit._id, 5)">{{isDayPerf(habit._id,5)}}
                                                 </button>
                                             </div>
                                             <div class="col-xs-2 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-click="switchState(habit._id, 6)">{{isDayPerf(habit._id,6)}}
+                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,6), 'isnotdone': !isdone(habit._id, 6)}"  ng-click="switchState(habit._id, 6)">{{isDayPerf(habit._id,6)}}
                                                 </button>
                                             </div>
                                             <div class="col-xs-2"></div> <!-- this column empty -->
@@ -136,7 +135,8 @@
 
                         </div>
                         <div class="col-xs-3">
-                        un peu de texte la
+                        un peu de texte la<br>
+                        {{toggle}}
                         </div>  
                     </div>  
 
