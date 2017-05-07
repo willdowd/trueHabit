@@ -1,6 +1,13 @@
 'use strict';
 
-angular.module('trueHabit', ['ui.router','ngResource','ngDialog','angularMoment'])
+angular.module('trueHabit', ['ui.router',
+    'ngResource',
+    'ngDialog',
+    'angularMoment',
+    'accountManagement', 
+    'habitManagement', 
+    'calendarManagement'])
+
 .config(function($stateProvider, $urlRouterProvider) {
         $stateProvider
         

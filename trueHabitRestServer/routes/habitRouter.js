@@ -185,7 +185,22 @@ habitRouter.route('/:habitid/statistic/:statdate')
         }
         if (!found)
         {
-            console.log("STATISTIC NOT FOUND - ERROR");
+            console.log("STATISTIC NOT FOUND - ASSUMING 0 - ADDING STAT");
+            var dateval = (req.params.statdate).toString();
+            var newstat = {
+                date: dateval,
+                value: 1
+            };
+            habit.statistics.push(newstat);
+            res.json({value: 1});
+            habit.save(function(err, habit){
+                if (err) next(err);
+                console.log("updated habit with new stat");
+                // res.writeHead(200, {
+                //     'Content-Type': 'text/plain'
+                // });
+                //res.write(newstat.value);
+            });
         }
     });
 });
