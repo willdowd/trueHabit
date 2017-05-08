@@ -129,29 +129,37 @@ angular.module('trueHabit')
         statDateFactory) {
     
     
-    $scope.viewDate = new Date();
+    $scope.todayAsDate = new Date();
+    $scope.dayOfTheWeek;
 
-    $scope.today = moment().startOf('day').format();
+    //$scope.today = moment().startOf('day').format();
     $scope.username = AuthFactory.getUsername();
     $scope.message = "no message";
     $scope.user_id;
 
 
     calendarFactory.compileViewDates();
+
     $scope.realDateArray = calendarFactory.realDateArr;
     $scope.displayDateArray = calendarFactory.displayDateArr;
     $scope.isToday = calendarFactory.isTodayArr;
+    $scope.titleViewDate = calendarFactory.titleViewDate;
+
+    $scope.dayOfTheWeek = calendarFactory.dayOfTheWeek;
+
+    console.log("dayOfTheWeek: ",$scope.dayOfTheWeek);
+
+    console.log("titleViewDate: ",$scope.titleViewDate);
+
+    console.log("real date array: ",$scope.realDateArray);
+
+    
 
 
-    $scope.firsthabit = [0, 0, 0, 0, 0, 0, 0];
+
 
     $scope.isdone = function(habitid, dayNb){
-        var val = mapFactory.getPerfData(habitid, dayNb);
-        console.log('isdone: ',val);
-        var boolval = (val == 1);
-        console.log('isdone bool: ',boolval);
-        return boolval;
-        //return (mapFactory.getPerfData(habitid, dayNb) == 1);
+        return (mapFactory.getPerfData(habitid, dayNb) == 1);
     }
     
     $scope.isDayPerf = function (habitid, dayNb) {
@@ -161,9 +169,9 @@ angular.module('trueHabit')
         //if(value == 1) return true;
     };
 
-    $rootScope.$on('recomputeDaysPerf', function () {
+    $scope.$on('recomputeDaysPerf', function () {
         
-        console.log("RECOMPUTE DAYS PERF");
+        //console.log("RECOMPUTE DAYS PERF");
         
         for (var i = 0; i < $scope.allhabits.length; i++){
                 var obj = $scope.allhabits[i];
@@ -172,24 +180,46 @@ angular.module('trueHabit')
 
                     var myhabitid = obj._id;
                     var myhabitdate = dn;
-                    var myhabitkey = mapFac.makeKey(myhabitid,myhabitdate);
-
+                    var myhabitkey = mapFactory.makeKey(myhabitid,myhabitdate);
+                    console.log("RECOMPUTE - KEY: ",myhabitkey);
                     var statdate = statDateFactory.makeStatDate($scope.realDateArray[dn]);
                     
                     statisticFactory.getStatistic().query({habitid: myhabitid, statdate: statdate},
                         function(response){
                             //console.log("GOT ANSWER! VALUE: ",response.value, " FOR HABITKEY ", myhabitkey)
                             //$scope.dayPerformed.set(myhabitkey, response.value);
-                            mapFac.pushPerfData(myhabitid, dn, response.value);
+                            if (response.value != undefined){
+                                mapFactory.pushPerfData(myhabitid, dn, response.value);
+                                console.log("data pushed: ",response.value);
+                            }
+                            if (response.value == undefined){
+                                var newStatistic = {
+                                    date: statdate,
+                                    value: 0
+                                };
+                                statisticFactory.getStatistic().save({habitid: habitid, statdate: statdate}, newStatistic,
+                                    function(response){
+                                        //console.log("--> SAVE_STATE_DURING_RECOMPUTING - value: ",response.value," - date: ",statdate);
+                                        mapFactory.pushPerfData(habitid, dn, response.value);
+                                        console.log("data pushed: ",response.value);
+                                        //mapFactory.mafunctionadoree();
+                                        $state.reload();
+                                    },
+                                    function(response){
+                                    }
+                                );
+                            }
                         },
                         function(response){
                             $scope.message = "Error: " + response.status + " " + response.statusText;
                         }
                     );
+
                 }
             }
         //$scope.loggedIn = AuthFactory.isAuthenticated();
         //$scope.username = AuthFactory.getUsername();
+        mapFactory.mafunctionadoree();
     });
 
     $scope.allusers = multiUsersFactory.query(
@@ -269,6 +299,23 @@ angular.module('trueHabit')
             case 5: return $scope.isToday[5];
             case 6: return $scope.isToday[6];
         }
+    };
+
+    $scope.previousWeek = function()
+    {
+        console.log("previous week");
+        calendarFactory.lastWeek();
+        $state.reload();
+    };
+    $scope.nextWeek = function()
+    {
+        console.log("next week");
+        calendarFactory.nextWeek();
+    };
+    $scope.todaysWeek = function()
+    {
+        console.log("today's week");
+        calendarFactory.today();
     };
 
     

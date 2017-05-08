@@ -50,23 +50,6 @@ angular.module('habitManagement', [])
       newHabit, 
       function(response){
         $state.reload();
-        // var habitid = response._id;
-        // var statdate = moment().startOf('day').format("YYYY/MM/DD");
-        // var mystring = statdate.toString();
-        // console.log("MYSTRING: - ",mystring);
-
-        // var newStatistic = {
-        //     date: mystring,
-        //     value: 0
-        // };
-        // statisticFactory.getStatistic().save({habitid: habitid}, newStatistic,
-        //     function(response){
-        //         console.log("response to add default stat: ",response);
-        //         //return response.value;
-        //     },
-        //     function(response){
-        //     }
-        // );;
       },
       function(response){
       });
@@ -75,38 +58,6 @@ angular.module('habitManagement', [])
   return newHabitFac;
 
 }])
-
-
-// .factory('habitStateFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
-
-//   var habitStateFac = {
-
-//   };
-
-//   statFac.switchState = function(habitid, statdate, ){
-
-//     statisticFactory.getStatistic().update({habitid: habitid, statdate: statdate}, newStatistic,
-//       function(response){
-//           console.log("--> SWITCH_STATE - value: ",response.value," - date: ",statdate);
-          
-//           //$scope.firsthabit[0] = response.value;
-//           var specificKey = habitid.toString()+dayNb.toString();
-//           //console.log("specificKey: ", specificKey);
-//           $scope.performanceMap.set(specificKey,response.value);
-//           //$rootScope.$broadcast('recomputeDaysPerf');
-//           //$scope.recomputeDayPerformed = true;
-//       },
-//       function(response){
-//       }
-//     );
-
-//   };
-
-//   return habitStateFac;
-
-// }])
-
-
 
 
 .factory('mapFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
@@ -131,7 +82,7 @@ angular.module('habitManagement', [])
     }
     
     var index = performanceMap.findIndex(findIndexVal);
-    console.log("index: ",index);
+    //console.log("index: ",index);
     
     if (index == -1){
       performanceMap.push({key: mapkey, value: perf});
@@ -193,10 +144,11 @@ angular.module('habitManagement', [])
 
   statFac.getStatistic = function(){
     
-    console.log("getStatistic in StatisticFactory");
+    //console.log("getStatistic in StatisticFactory");
     return $resource(baseURL + "habits/:habitid/statistic/:statdate", 
       null,//{habitid:"@habitid", statdate: "@statdate"},
       {'update': {method: 'PUT'},
+      'save': {method: 'POST'},
       'query': {method:'GET', isArray:false}
     });
   };

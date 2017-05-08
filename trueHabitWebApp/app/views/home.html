@@ -1,7 +1,7 @@
 
 <div class="container">
     <div class="row row-content">
-        <div class="col-xs-12 col-sm-8">
+        <div class="col-xs-12 col-sm-9">
             <div class="card">
                 <!-- Main card block -start-  with the habits and dates -->
                 <div class="card-block">
@@ -135,8 +135,45 @@
 
                         </div>
                         <div class="col-xs-3">
-                        un peu de texte la<br>
-                        {{toggle}}
+                        
+                            <div class="row center-block text-center">
+
+                                <div class="col-xs-12 text-center">
+                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="previousWeek()">
+                                    <span class="glyphicon glyphicon-menu-left"
+                                 aria-hidden="true"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="todaysWeek()">
+                                        <span>TODAY</span>
+                                    </button>
+                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="nextWeek()">
+                                    <span class="glyphicon glyphicon-menu-right"
+                                 aria-hidden="true"></span>
+                                    </button>
+                                </div>
+
+                                <!-- <div class="col-xs-2 text-right">
+                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="openAddHabit()">
+                                    <span class="glyphicon glyphicon-menu-left"
+                                 aria-hidden="true"></span>
+                                    </button>
+                                </div>
+
+                                <div class="col-xs-6 text-center">
+                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="openAddHabit()">
+                                        <span>TODAY</span>
+                                    </button>
+                                </div>
+                                
+                                <div class="col-xs-2 text-left">
+                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="openAddHabit()">
+                                    <span class="glyphicon glyphicon-menu-right"
+                                 aria-hidden="true"></span>
+                                    </button>
+                                </div> -->
+
+                            </div>
+                        
                         </div>  
                     </div>  
 
@@ -160,7 +197,7 @@
                 <!-- Main card block -end -->
             </div>
         </div>
-        <div class="col-xs-12 col-sm-4">
+        <div class="col-xs-12 col-sm-3">
             <div class="card">
                 <div class="card-block">
                     This is the card block with the score and streak
