@@ -6,7 +6,8 @@ angular.module('trueHabit', ['ui.router',
     'angularMoment',
     'accountManagement', 
     'habitManagement', 
-    'calendarManagement'])
+    'calendarManagement',
+    'accountController'])
 
 .config(function($stateProvider, $urlRouterProvider) {
         $stateProvider
