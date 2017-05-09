@@ -6,29 +6,24 @@ angular.module('accountManagement', [])
 .factory('$localStorage', ['$window', function ($window) {
     return {
         store: function (key, value) {
-          console.log("local storage - store");
             $window.localStorage[key] = value;
         },
         get: function (key, defaultValue) {
-          console.log("local storage - get");
             return $window.localStorage[key] || defaultValue;
         },
         remove: function (key) {
-          console.log("local storage - remove");
             $window.localStorage.removeItem(key);
         },
         storeObject: function (key, value) {
-          console.log("local storage - storeObject");
             $window.localStorage[key] = JSON.stringify(value);
         },
         getObject: function (key, defaultValue) {
-          console.log("local storage - getObject");
             return JSON.parse($window.localStorage[key] || defaultValue);
         }
     };
 }])
 
-.factory('authFactory', ['$resource', '$http', '$localStorage', '$rootScope', '$window', 'baseURL', 'ngDialog', function($resource, $http, $localStorage, $rootScope, $window, baseURL, ngDialog){
+.factory('AuthFactory', ['$resource', '$http', '$localStorage', '$rootScope', '$window', 'baseURL', 'ngDialog', function($resource, $http, $localStorage, $rootScope, $window, baseURL, ngDialog){
     
     var authFac = {};
     var TOKEN_KEY = 'Token';
@@ -65,7 +60,6 @@ angular.module('accountManagement', [])
   }
  
   function destroyUserCredentials() {
-    console.log("destroyCredentials");
     authToken = undefined;
     username = '';
     isAuthenticated = false;
@@ -74,7 +68,7 @@ angular.module('accountManagement', [])
   }
      
     authFac.login = function(loginData) {
-        console.log("authFac - login");
+        
         $resource(baseURL + "users/login")
         .save(loginData,
            function(response) {
@@ -85,7 +79,7 @@ angular.module('accountManagement', [])
            },
            function(response){
               isAuthenticated = false;
-              console.log("authFac - login - FAILED - response: ",response);
+            
               var message = '\
                 <div class="ngdialog-message">\
                 <div><h3>Login Unsuccessful</h3></div>' +
@@ -103,18 +97,15 @@ angular.module('accountManagement', [])
     };
     
     authFac.logout = function() {
-        console.log("authFac - logout");
         $resource(baseURL + "users/logout").get(function(response){
         });
         destroyUserCredentials();
     };
     
     authFac.register = function(registerData) {
-        console.log("authFac - register");
         $resource(baseURL + "users/register")
         .save(registerData,
            function(response) {
-            console.log("authFac - register - save worked");
               authFac.login({username:registerData.username, password:registerData.password});
             if (registerData.rememberMe) {
                 $localStorage.storeObject('userinfo',
@@ -127,7 +118,6 @@ angular.module('accountManagement', [])
            },
            function(response){
             
-            console.log("authFac - register - save DIDN'T WORK");
               var message = '\
                 <div class="ngdialog-message">\
                 <div><h3>Registration Unsuccessful</h3></div>' +
@@ -142,12 +132,10 @@ angular.module('accountManagement', [])
     };
     
     authFac.isAuthenticated = function() {
-        console.log("authFac - isAuthenticated: ",isAuthenticated);
         return isAuthenticated;
     };
     
     authFac.getUsername = function() {
-        console.log("authFac - getUsername: ",username);
         return username;  
     };
 

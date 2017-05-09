@@ -76,21 +76,17 @@ router.post('/register', function(req, res) {
 });
 
 router.post('/login', function(req, res, next) {
-  console.log("/login route");
   passport.authenticate('local', function(err, user, info) {
     if (err) {
-      console.log("login - err: ",err);
       return next(err);
     }
     if (!user) {
-      console.log("login - no user: check this info: ",info);
       return res.status(401).json({
         err: info
       });
     }
     req.logIn(user, function(err) {
       if (err) {
-        console.log("login - 2nd step still err");
         return res.status(500).json({
           err: 'Could not log in user'
         });

@@ -1,16 +1,13 @@
 'use strict';
 
-angular.module('trueHabit', [
-    'ui.router',
+angular.module('trueHabit', ['ui.router',
     'ngResource',
     'ngDialog',
     'angularMoment',
     'accountManagement', 
     'habitManagement', 
     'calendarManagement',
-    'AccountCtrl',
-    'DashboardCtrl',
-    'HomeCtrl'])
+    'accountController'])
 
 .config(function($stateProvider, $urlRouterProvider) {
         $stateProvider
@@ -21,25 +18,16 @@ angular.module('trueHabit', [
                 views: {
                     'header': {
                         templateUrl : 'views/header.html',
-                        controller : 'DashboardCtrl'
+                        controller : 'HeaderController',
+                        //controllerUrl  : 'scripts/controllers/HeaderController.js'
                     },
                     'content': {
                         templateUrl : 'views/home.html',
-                        controller  : 'HomeCtrl'
+                        controller  : 'HomeController',
+                        //controllerUrl  : 'scripts/controllers/HomeController.js'
                     }
                 }
 
-            })
-
-            // route for the dashboard page
-            .state('app.dashboard', {
-                url:'dashboard',
-                views: {
-                    'content@': {
-                        templateUrl : 'views/dashboard.html',
-                        controller  : 'DashboardCtrl'
-                    }
-                }
             })
 
             // route for the account page
@@ -48,7 +36,8 @@ angular.module('trueHabit', [
                 views: {
                     'content@': {
                         templateUrl : 'views/myaccount.html',
-                        controller  : 'accountCtrl'
+                        controller  : 'AccountController',
+                        //controllerUrl  : 'scripts/controllers/AccountController.js'
                     }
                 }
 

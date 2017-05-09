@@ -1,40 +1,37 @@
 'use strict';
 
-angular.module('DashboardCtrl', [])
+angular.module('trueHabit')
 
-.controller('HeaderCtrl', ['$scope', '$state', '$rootScope', 'ngDialog', 'authFactory', function ($scope, $state, $rootScope, ngDialog, authFactory) {
+.controller('HeaderController', ['$scope', '$state', '$rootScope', 'ngDialog', 'AuthFactory', function ($scope, $state, $rootScope, ngDialog, AuthFactory) {
 
     $scope.loggedIn = false;
     $scope.username = '';
+
+
     
-    if(authFactory.isAuthenticated()) {
-        console.log("isAuthenticated");
+    if(AuthFactory.isAuthenticated()) {
         $scope.loggedIn = true;
-        $scope.username = authFactory.getUsername();
+        $scope.username = AuthFactory.getUsername();
     }
         
     $scope.openLogin = function () {
-        console.log("openLogin");
-        ngDialog.open({ template: 'views/login.html', scope: $scope, className: 'ngdialog-theme-default', controller:"LoginCtrl" });
+        ngDialog.open({ template: 'views/login.html', scope: $scope, className: 'ngdialog-theme-default', controller:"LoginController" });
     };
     
     $scope.logOut = function() {
-        console.log("logOut");
-       authFactory.logout();
+       AuthFactory.logout();
         $scope.loggedIn = false;
         $scope.username = '';
     };
     
     $rootScope.$on('login:Successful', function () {
-        console.log("login Successful");
-        $scope.loggedIn = authFactory.isAuthenticated();
-        $scope.username = authFactory.getUsername();
+        $scope.loggedIn = AuthFactory.isAuthenticated();
+        $scope.username = AuthFactory.getUsername();
     });
         
     $rootScope.$on('registration:Successful', function () {
-        console.log("registration Successful");
-        $scope.loggedIn = authFactory.isAuthenticated();
-        $scope.username = authFactory.getUsername();
+        $scope.loggedIn = AuthFactory.isAuthenticated();
+        $scope.username = AuthFactory.getUsername();
     });
     
     $scope.stateis = function(curstate) {
@@ -43,7 +40,7 @@ angular.module('DashboardCtrl', [])
     
 }])
 
-.controller('LoginCtrl', ['$scope', 'ngDialog', '$localStorage', 'authFactory', function ($scope, ngDialog, $localStorage, authFactory) {
+.controller('LoginController', ['$scope', 'ngDialog', '$localStorage', 'AuthFactory', function ($scope, ngDialog, $localStorage, AuthFactory) {
     
     $scope.loginData = $localStorage.getObject('userinfo','{}');
     
@@ -51,14 +48,14 @@ angular.module('DashboardCtrl', [])
         if($scope.rememberMe)
            $localStorage.storeObject('userinfo',$scope.loginData);
 
-        authFactory.login($scope.loginData);
+        AuthFactory.login($scope.loginData);
 
         ngDialog.close();
 
     };
             
     $scope.openRegister = function () {
-        ngDialog.open({ template: 'views/register.html', scope: $scope, className: 'ngdialog-theme-default', controller:"RegisterCtrl" });
+        ngDialog.open({ template: 'views/register.html', scope: $scope, className: 'ngdialog-theme-default', controller:"RegisterController" });
     };
 
     //$scope.getCurrentUser = AuthFactory.getCurrentUser();        
@@ -66,7 +63,17 @@ angular.module('DashboardCtrl', [])
     
 }])
 
-.controller('RegisterCtrl', ['$scope', 'ngDialog', '$localStorage', 'authFactory', function ($scope, ngDialog, $localStorage, authFactory) {
+
+
+// .controller('AccountController', ['$scope', 'AuthFactory', function ($scope, AuthFactory) {
+//     $scope.username = '';
+    
+//     if(AuthFactory.isAuthenticated()) {
+//         $scope.username = AuthFactory.getUsername();
+//     }
+// }])
+
+.controller('RegisterController', ['$scope', 'ngDialog', '$localStorage', 'AuthFactory', function ($scope, ngDialog, $localStorage, AuthFactory) {
     
     $scope.register={};
     $scope.loginData={};
@@ -74,14 +81,18 @@ angular.module('DashboardCtrl', [])
     $scope.doRegister = function() {
         console.log('Doing registration', $scope.registration);
 
-        authFactory.register($scope.registration);
+        AuthFactory.register($scope.registration);
         
         ngDialog.close();
 
     };
 }])
 
-.controller('AddHabitCtrl', ['$scope', 'moment', 'ngDialog', 'newHabitFactory', 
+
+
+
+
+.controller('addHabitController', ['$scope', 'moment', 'ngDialog', 'newHabitFactory', 
     function ($scope, moment, ngDialog, newHabitFactory) {
     
     var vm = $scope;
@@ -99,17 +110,22 @@ angular.module('DashboardCtrl', [])
     };
 }])
 
-.controller('DashboardCtrl', ['$scope', '$rootScope', 
+// .controller('statisticController', ['$scope', 'ngDialog', '$state', '$localStorage', 'AuthFactory', 'habitFactory', function ($scope, ngDialog, $state, $localStorage, AuthFactory, habitFactory) {
+    
+
+// }])
+
+.controller('HomeController', ['$scope', '$rootScope', 
     'moment', 'ngDialog', '$state', '$stateParams', 
-    '$localStorage', 'authFactory', 'habitFactory', 
+    '$localStorage', 'AuthFactory', 'habitFactory', 
     'singleUsersFactory', 'multiUsersFactory', 'statisticFactory',
-    'calendarFactory', 'mapFactory',
+    'calendarFactory', 'mapFactory', //'habitStateFactory',
     'statDateFactory', 
     function ($scope, $rootScope, 
         moment, ngDialog, $state, $stateParams, 
-        $localStorage, authFactory, habitFactory, 
+        $localStorage, AuthFactory, habitFactory, 
         singleUsersFactory, multiUsersFactory, statisticFactory,
-        calendarFactory, mapFactory,
+        calendarFactory, mapFactory, //habitStateFactory,
         statDateFactory) {
     
     
@@ -117,7 +133,7 @@ angular.module('DashboardCtrl', [])
     $scope.dayOfTheWeek;
 
     //$scope.today = moment().startOf('day').format();
-    $scope.username = authFactory.getUsername();
+    $scope.username = AuthFactory.getUsername();
     $scope.message = "no message";
     $scope.user_id;
 
