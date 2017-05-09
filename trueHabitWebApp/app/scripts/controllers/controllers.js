@@ -65,13 +65,13 @@ angular.module('trueHabit')
 
 
 
-.controller('AccountController', ['$scope', 'AuthFactory', function ($scope, AuthFactory) {
-    $scope.username = '';
+// .controller('AccountController', ['$scope', 'AuthFactory', function ($scope, AuthFactory) {
+//     $scope.username = '';
     
-    if(AuthFactory.isAuthenticated()) {
-        $scope.username = AuthFactory.getUsername();
-    }
-}])
+//     if(AuthFactory.isAuthenticated()) {
+//         $scope.username = AuthFactory.getUsername();
+//     }
+// }])
 
 .controller('RegisterController', ['$scope', 'ngDialog', '$localStorage', 'AuthFactory', function ($scope, ngDialog, $localStorage, AuthFactory) {
     
