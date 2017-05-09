@@ -1,210 +1,27 @@
 
 <div class="container">
-    <div class="row row-content">
-        <div class="col-xs-12 col-sm-9">
-            <div class="card">
-                <!-- Main card block -start-  with the habits and dates -->
-                <div class="card-block">
-                    <div class="row row-content">
-                        <div class="col-sm-12">
-                            <button type="button" class="btn btn-secondary" ng-click="openAddHabit()">
-                            <span class="glyphicon glyphicon-plus"
-                         aria-hidden="true"></span>
-                         add new habit
-                            </button>
-                        </div>
-                        <div class="col-sm-12">
-                            <p id="monthIndicator"> {{viewDate | date: 'MMM yyyy'}} </p>
-                        </div>
-                    </div>
-
-
-                    <div class="row row-content">
-                        <div class="col-xs-9">
-                            <div class="row row-content">
-                                <div class="col-xs-12">
-
-                                </div>
-                                <div class="col-xs-4">
-                                    <div class="row">
-                                        <div class="col-xs-4">
-                                            
-                                        </div> <!-- this column empty -->
-                                        <div class="col-xs-4 text-center" ng-class="{'special-day': isItToday(0) }"> M </div>
-                                        <div class="col-xs-4 text-center" ng-class="{'special-day': isItToday(1) }"> T </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-8">
-                                    <div class="row">
-                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(2) }"> W </div>
-                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(3) }"> T </div>
-                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(4) }"> F </div>
-                                        <!-- <div class="col-xs-2 text-center" ng-class="{'special-day': {{isSaturday}} }"> S </ -->
-                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(5) }"> S</div>
-                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(6) }"> S </div>
-                                        <div class="col-xs-2"></div> <!-- this column empty -->
-                                    </div>
-                                </div>
-                                <div class="col-xs-4">
-                                    <div class="row">
-                                        <div class="col-xs-4"></div> <!-- this column empty -->
-                                        <div class="col-xs-4 text-center" ng-class="{'special-day': isItToday(0) }"> {{displayDateArray[0]}} </div>
-                                        <div class="col-xs-4 text-center" ng-class="{'special-day': isItToday(1) }"> {{displayDateArray[1]}} </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xs-8">
-                                    <div class="row">
-                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(2) }"> {{displayDateArray[2]}} </div>
-                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(3) }"> {{displayDateArray[3]}} </div>
-                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(4) }"> {{displayDateArray[4]}} </div>
-                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(5) }"> {{displayDateArray[5]}} </div>
-                                        <div class="col-xs-2 text-center" ng-class="{'special-day': isItToday(6) }"> {{displayDateArray[6]}} </div>
-                                        <div class="col-xs-2"></div> <!-- this column empty -->
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-
-                            <ul>
-                                <li id="listOfHabits" ng-repeat="habit in allhabits">
-                                    <div class="row row-habit">
-                                        <div class="col-xs-3">
-                                            <button type="button" class="btn btn-xs btn-secondary" ng-click="removeHabit(habit._id)">
-                                            <span class="glyphicon glyphicon-trash"
-                                            aria-hidden="true"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-xs btn-secondary" ng-click="reinitializeHabit()">
-                                            <span class="glyphicon glyphicon-remove-circle"
-                                            aria-hidden="true"></span>
-                                            </button>
-                                        </div>
-                                        <div class="col-xs-9">
-                                            <h3 id="habitNameTitle">{{habit.name}}</h3>
-                                        </div>
-                                    
-                                    <div class="col-xs-4">
-                                        <div class="row">
-                                            <div class="col-xs-4"></div> <!-- this column empty -->
-                                            <div class="col-xs-4 text-center">
-
-                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,0), 'isnotdone': !isdone(habit._id, 0)}" ng-click="switchState(habit._id, 0)">{{isDayPerf(habit._id,0)}}
-                                                </button>
-                                            </div>
-                                            <div class="col-xs-4 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,1), 'isnotdone': !isdone(habit._id, 1)}"  ng-click="switchState(habit._id, 1)">{{isDayPerf(habit._id,1)}}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-8">
-                                        <div class="row">
-                                            <div class="col-xs-2 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,2), 'isnotdone': !isdone(habit._id, 2)}"  ng-click="switchState(habit._id, 2)">{{isDayPerf(habit._id,2)}}
-                                                </button>
-                                            </div>
-                                            <div class="col-xs-2 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,3), 'isnotdone': !isdone(habit._id, 3)}"  ng-click="switchState(habit._id, 3)">{{isDayPerf(habit._id,3)}}
-                                                </button>
-                                            </div>
-                                            <div class="col-xs-2 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,4), 'isnotdone': !isdone(habit._id, 4)}"  ng-click="switchState(habit._id, 4)">{{isDayPerf(habit._id,4)}}
-                                                </button>
-                                            </div>
-                                            <div class="col-xs-2 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,5), 'isnotdone': !isdone(habit._id, 5)}"  ng-click="switchState(habit._id, 5)">{{isDayPerf(habit._id,5)}}
-                                                </button>
-                                            </div>
-                                            <div class="col-xs-2 text-center">
-                                                <button type="button" class="btn btn-xs btn-outline" ng-class="{'isdone': isdone(habit._id,6), 'isnotdone': !isdone(habit._id, 6)}"  ng-click="switchState(habit._id, 6)">{{isDayPerf(habit._id,6)}}
-                                                </button>
-                                            </div>
-                                            <div class="col-xs-2"></div> <!-- this column empty -->
-                                        </div>
-                                    </div>
-
-                                    </div>
-                                </li>
-                            </ul>
-
-                            </div>
-
-
-                        </div>
-                        <div class="col-xs-3">
-                        
-                            <div class="row center-block text-center">
-
-                                <div class="col-xs-12 text-center">
-                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="previousWeek()">
-                                    <span class="glyphicon glyphicon-menu-left"
-                                 aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="todaysWeek()">
-                                        <span>TODAY</span>
-                                    </button>
-                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="nextWeek()">
-                                    <span class="glyphicon glyphicon-menu-right"
-                                 aria-hidden="true"></span>
-                                    </button>
-                                </div>
-
-                                <!-- <div class="col-xs-2 text-right">
-                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="openAddHabit()">
-                                    <span class="glyphicon glyphicon-menu-left"
-                                 aria-hidden="true"></span>
-                                    </button>
-                                </div>
-
-                                <div class="col-xs-6 text-center">
-                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="openAddHabit()">
-                                        <span>TODAY</span>
-                                    </button>
-                                </div>
-                                
-                                <div class="col-xs-2 text-left">
-                                    <button type="button" class="btn btn-xs btn-secondary" ng-click="openAddHabit()">
-                                    <span class="glyphicon glyphicon-menu-right"
-                                 aria-hidden="true"></span>
-                                    </button>
-                                </div> -->
-
-                            </div>
-                        
-                        </div>  
-                    </div>  
-
-                    <div class="row">
-                    <!-- <ul>
-                        <li id="listOfHabits" ng-repeat="habit in allhabits">
-                            <div class="row row-habit">
-                            {{isDayPerformed(habit._id, 0)}}<br>
-                            {{isDayPerformed(habit._id, 1)}}<br>
-                            {{isDayPerformed(habit._id, 2)}}<br>
-                            {{isDayPerformed(habit._id, 3)}}<br>
-                            {{isDayPerformed(habit._id, 4)}}<br>
-                            {{isDayPerformed(habit._id, 5)}}<br>
-                            {{isDayPerformed(habit._id, 6)}}<br>
-                            </div>
-                            </li>
-                            </ul> -->
-                    </div>                  
-
-                </div>
-                <!-- Main card block -end -->
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-3">
-            <div class="card">
-                <div class="card-block">
-                    This is the card block with the score and streak
-                </div>
-            </div>
-        </div>
-
+    <div class="jumbotron">
+        <h1 class="text-center">True Habit</h1>
     </div>
-
+    <div class="row row-home-button">
+        <div class="col-sm-offset-5 col-sm-2 text-center">
+                
+                <button 
+                    type="button" 
+                    class="btn btn-block center-block"
+                    ng-click="openLogin()">
+                    Login
+                </button>
+        </div>
+    </div>
+    <div class="row row-home-button">
+        <div class="col-sm-offset-5 col-sm-2 text-center">
+                <button 
+                type="button" 
+                class="btn btn-block center-block"
+                ui-sref="app.dashboard">
+                Register
+                </button>
+        </div>
+    </div>
 </div>
