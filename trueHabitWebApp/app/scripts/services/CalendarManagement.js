@@ -10,17 +10,19 @@ angular.module('calendarManagement', [])
   var displayDateArr = [];
   var weekIsCurrent = true;
   var currentViewDate = new Date();
-  var titleViewDate = new Date();
   var dayOfTheWeek = -1;
 
-  var calendarFac = {
-    isTodayArr: isTodayArr,
-    realDateArr: realDateArr,
-    displayDateArr: displayDateArr,
-    titleViewDate: titleViewDate,
-    dayOfTheWeek: dayOfTheWeek,
-    weekIsCurrent: weekIsCurrent
-  };
+  var calendarFac = {};
+    // isTodayArr: isTodayArr,
+    // realDateArray: realDateArr,
+    // displayDateArr: displayDateArr,
+    // dayOfTheWeek: dayOfTheWeek,
+    // weekIsCurrent: weekIsCurrent
+  //};
+
+  calendarFac.getRealDateArray = function(){ return realDateArr; };
+  calendarFac.getDisplayDateArr = function(){ return displayDateArr; };
+  calendarFac.getIsTodayArr = function(){ return isTodayArr; };
 
   // switch(moment().day())
   // {

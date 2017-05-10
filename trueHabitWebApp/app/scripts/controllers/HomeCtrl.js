@@ -3,8 +3,8 @@
 angular.module('HomeCtrl', [])
 
 
-.controller('HomeCtrl', ['$scope','$rootScope','$state','ngDialog','authFactory', 
-    function ($scope,$rootScope,$state,ngDialog,authFactory) {
+.controller('HomeCtrl', ['$scope','$rootScope','$state','ngDialog','authFactory', 'mapFactory', 
+    function ($scope,$rootScope,$state,ngDialog,authFactory,mapFactory) {
     
     $scope.loggedIn = false;
     $scope.username = '';
@@ -25,9 +25,10 @@ angular.module('HomeCtrl', [])
     };
 
     $scope.openDashboard = function () {
-        console.log("OPEN DASHBOARD");
+        console.log("OPEN DASHBOARD CALLED");
+        mapFactory.recompute();
         //$rootScope.$broadcast('recomputeDaysPerf');
-        authFactory.recompute();
+        //authFactory.recompute();
     };
     
     

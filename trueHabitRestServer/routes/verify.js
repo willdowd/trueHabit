@@ -13,9 +13,9 @@ exports.verifyOrdinaryUser = function (req, res, next) {
     console.log("verifyOrdinaryUser");
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
-    console.log("req.body.token: ",req.body.token);
-    console.log("req.query.token: ",req.query.token);
-    console.log(req.headers['x-access-token']);
+    // console.log("req.body.token: ",req.body.token);
+    // console.log("req.query.token: ",req.query.token);
+    // console.log(req.headers['x-access-token']);
     //console.log(token);
     // decode token
     if (token) {

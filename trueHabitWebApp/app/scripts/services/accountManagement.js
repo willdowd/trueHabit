@@ -144,10 +144,13 @@ angular.module('accountManagement', [])
         return username;  
     };
 
-    authFac.recompute = function(){
-      console.log("RECOMPUTE IN AUTH FAC");
-      $rootScope.$broadcast('recomputeDaysPerf');
+    authFac.getUserId = function() {
+        return userId;  
     };
+    authFac.setUserId = function(user_id) {
+        userId = user_id;  
+    };
+
 
     loadUserCredentials();
     
