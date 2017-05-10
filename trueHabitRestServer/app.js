@@ -26,12 +26,14 @@ var app = express();
 
 // Secure traffic only
 app.all('*', function(req, res, next){
+    //console.log('req header: ',req.header);
     console.log('req start: ',req.secure, req.hostname, req.url, app.get('port'));
   if (req.secure) {
     return next();
   };
-
- res.redirect('https://'+req.hostname+':'+app.get('secPort')+req.url);
+  console.log('res redirect to: https://'+req.hostname+':'+app.get('secPort')+req.url);
+  res.redirect('https://'+req.hostname+':'+app.get('secPort')+req.url);
+  console.log('res redirect done');
 });
 
 // view engine setup
@@ -46,7 +48,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // passport config
+console.log("call to app.use passport initialize - start");
 app.use(passport.initialize());
+console.log("call to app.use passport initialize - end");
 
 app.use(express.static(path.join(__dirname, 'public')));
 

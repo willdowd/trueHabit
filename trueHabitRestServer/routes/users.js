@@ -34,7 +34,7 @@ router.get('/facebook/callback', function(req,res,next){
 });
 
 /* GET users listing. */
-router.get('/'/*, Verify.verifyOrdinaryUser, Verify.verifyAdmin*/, function(req, res, next) {
+router.get('/'/*, Verify.verifyOrdinaryUser/*, Verify.verifyAdmin*/, function(req, res, next) {
     User.find({}, function (err, user) {
         if (err) next(err);
         res.json(user);
@@ -53,7 +53,7 @@ router.route('/:username')
 });
 
 router.post('/register', function(req, res) {
-    console.log("in register");
+    console.log("in register - req.body: ",req.body.username);
     User.register(new User({ username : req.body.username }),
       req.body.password, function(err, user) {
         if (err) {

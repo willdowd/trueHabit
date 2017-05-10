@@ -39,7 +39,6 @@ angular.module('accountManagement', [])
     
 
   function loadUserCredentials() {
-    console.log("loadUserCredentials");
     var credentials = $localStorage.getObject(TOKEN_KEY,'{}');
     if (credentials.username != undefined) {
       useCredentials(credentials);
@@ -47,13 +46,11 @@ angular.module('accountManagement', [])
   }
  
   function storeUserCredentials(credentials) {
-    console.log("storeUserCredentials");
     $localStorage.storeObject(TOKEN_KEY, credentials);
     useCredentials(credentials);
   }
  
   function useCredentials(credentials) {
-    console.log("useCredentials");
     isAuthenticated = true;
     username = credentials.username;
     authToken = credentials.token;
@@ -61,7 +58,6 @@ angular.module('accountManagement', [])
     // Set the token as header for your requests!
     $http.defaults.headers.common['x-access-token'] = authToken;
     $rootScope.$broadcast('recomputeDaysPerf');
-    console.log("BROADCAST - useCredentials");
   }
  
   function destroyUserCredentials() {
@@ -74,18 +70,15 @@ angular.module('accountManagement', [])
   }
      
     authFac.login = function(loginData) {
-        console.log("authFac - login");
         $resource(baseURL + "users/login")
         .save(loginData,
            function(response) {
               storeUserCredentials({username:loginData.username, token: response.token});
               $rootScope.$broadcast('login:Successful');
-              console.log("BROADCAST - login");
               $rootScope.$broadcast('recomputeDaysPerf');
            },
            function(response){
               isAuthenticated = false;
-              console.log("authFac - login - FAILED - response: ",response);
               var message = '\
                 <div class="ngdialog-message">\
                 <div><h3>Login Unsuccessful</h3></div>' +
@@ -103,18 +96,20 @@ angular.module('accountManagement', [])
     };
     
     authFac.logout = function() {
-        console.log("authFac - logout");
         $resource(baseURL + "users/logout").get(function(response){
+          $rootScope.$broadcast('logout:Successful');
+        },
+        function(response){
+          console.log("logout failure");
         });
+
         destroyUserCredentials();
     };
     
     authFac.register = function(registerData) {
-        console.log("authFac - register");
         $resource(baseURL + "users/register")
         .save(registerData,
            function(response) {
-            console.log("authFac - register - save worked");
               authFac.login({username:registerData.username, password:registerData.password});
             if (registerData.rememberMe) {
                 $localStorage.storeObject('userinfo',
@@ -122,7 +117,6 @@ angular.module('accountManagement', [])
             }
            
               $rootScope.$broadcast('registration:Successful');
-              console.log("BROADCAST - register");
               $rootScope.$broadcast('recomputeDaysPerf');
            },
            function(response){
@@ -142,13 +136,17 @@ angular.module('accountManagement', [])
     };
     
     authFac.isAuthenticated = function() {
-        console.log("authFac - isAuthenticated: ",isAuthenticated);
+        console.log("method isAuthenticated called");
         return isAuthenticated;
     };
     
     authFac.getUsername = function() {
-        console.log("authFac - getUsername: ",username);
         return username;  
+    };
+
+    authFac.recompute = function(){
+      console.log("RECOMPUTE IN AUTH FAC");
+      $rootScope.$broadcast('recomputeDaysPerf');
     };
 
     loadUserCredentials();

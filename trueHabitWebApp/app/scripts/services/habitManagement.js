@@ -109,10 +109,16 @@ angular.module('habitManagement', [])
 
 
   mapFac.mafunctionadoree = function(){
+    var keyarr = [];
+    var valuearr = [];
     performanceMap.forEach(myfunc);
     function myfunc(item, index){
-      console.log("key: ",item.key," - value: ",item.value);
+      keyarr.push(item.key);
+      valuearr.push(item.value);
+      //console.log("key: ",item.key," - value: ",item.value);
     }
+    console.log("ADOREE: KEYS: ",keyarr);
+    console.log("ADOREE: VALS: ",valuearr);
   };
 
   return mapFac;

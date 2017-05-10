@@ -21,7 +21,7 @@ angular.module('trueHabit', [
                 views: {
                     'header': {
                         templateUrl : 'views/header.html',
-                        controller : 'DashboardCtrl'
+                        controller : 'HeaderCtrl'
                     },
                     'content': {
                         templateUrl : 'views/home.html',
@@ -48,7 +48,7 @@ angular.module('trueHabit', [
                 views: {
                     'content@': {
                         templateUrl : 'views/myaccount.html',
-                        controller  : 'accountCtrl'
+                        controller  : 'AccountCtrl'
                     }
                 }
 

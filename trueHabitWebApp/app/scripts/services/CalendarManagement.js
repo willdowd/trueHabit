@@ -8,7 +8,7 @@ angular.module('calendarManagement', [])
   var isTodayArr = [];
   var realDateArr = [];
   var displayDateArr = [];
-  var todaysWeek = false;
+  var weekIsCurrent = true;
   var currentViewDate = new Date();
   var titleViewDate = new Date();
   var dayOfTheWeek = -1;
@@ -19,7 +19,7 @@ angular.module('calendarManagement', [])
     displayDateArr: displayDateArr,
     titleViewDate: titleViewDate,
     dayOfTheWeek: dayOfTheWeek,
-    todaysWeek: todaysWeek
+    weekIsCurrent: weekIsCurrent
   };
 
   // switch(moment().day())
@@ -49,7 +49,7 @@ angular.module('calendarManagement', [])
 
 
   calendarFac.compileViewDates = function(){
-    //console.log("COMPILE VIEW DATES");
+    
     var currentViewMoment = moment(currentViewDate);
     var index = -1;
     var day = currentViewMoment.day();
@@ -102,16 +102,10 @@ angular.module('calendarManagement', [])
     isTodayArr[index]=true;
     realDateArr[index]=currentViewDate;
 
-    //console.log("COMPILE - dayOfTheWeek: ",dayOfTheWeek," - currentViewDate: ",currentViewDate, " - date: ",date);
-
     processDateArray(index, displayDateArr);
-    //processTitleViewDate
   };
 
   var processDateArray = function(index, arr){
-
-    console.log("processDateArray");
-    
     var h = -1;
     if(index != 0){
         for(var i=index-1;i>=0;i--)
@@ -146,6 +140,29 @@ angular.module('calendarManagement', [])
     console.log("BROADCAST - lastWeek method");
     $rootScope.$broadcast('recomputeDaysPerf');
 
+  };
+
+  calendarFac.nextWeek = function(){
+    var curr = currentViewDate;
+
+    currentViewDate.setDate(currentViewDate.getDate()+7);
+
+    console.log("BROADCAST - nextWeek method");
+    $rootScope.$broadcast('recomputeDaysPerf');
+  };
+
+  calendarFac.todaysWeek = function(){
+    console.log("TODAYS WEEK BROADCAST - nextWeek method");
+    $rootScope.$broadcast('recomputeDaysPerf');
+  };
+
+  calendarFac.isWeekCurrent = function(){
+    return weekIsCurrent;
+  };
+
+  calendarFac.setIsWeekCurrent = function(mybool){
+    weekIsCurrent = mybool;
+    console.log("setIsWeekCurrent - weekIsCurrent: ",weekIsCurrent);
   };
 
 

@@ -3,25 +3,35 @@
     <div class="jumbotron">
         <h1 class="text-center">True Habit</h1>
     </div>
-    <div class="row row-home-button">
+    <div ng-if="loggedIn" class="row row-home-button">
         <div class="col-sm-offset-5 col-sm-2 text-center">
-                
-                <button 
-                    type="button" 
-                    class="btn btn-block center-block"
-                    ng-click="openLogin()">
-                    Login
-                </button>
-        </div>
-    </div>
-    <div class="row row-home-button">
-        <div class="col-sm-offset-5 col-sm-2 text-center">
-                <button 
+            <button 
                 type="button" 
                 class="btn btn-block center-block"
-                ui-sref="app.dashboard">
+                ui-sref="app.dashboard"
+                ng-click="openDashboard()">
+                Dashboard
+            </button>
+        </div>
+    </div>
+    <div ng-if="!loggedIn" class="row row-home-button">
+        <div class="col-sm-offset-5 col-sm-2 text-center">
+            <button 
+                type="button" 
+                class="btn btn-block center-block"
+                ng-click="openLogin()">
+                Login
+            </button>
+        </div>
+    </div>
+    <div ng-if="!loggedIn" class="row row-home-button">
+        <div class="col-sm-offset-5 col-sm-2 text-center">
+            <button 
+                type="button" 
+                class="btn btn-block center-block"
+                ng-click="openRegister()">
                 Register
-                </button>
+            </button>
         </div>
     </div>
 </div>

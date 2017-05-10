@@ -2,84 +2,7 @@
 
 angular.module('DashboardCtrl', [])
 
-.controller('HeaderCtrl', ['$scope', '$state', '$rootScope', 'ngDialog', 'authFactory', function ($scope, $state, $rootScope, ngDialog, authFactory) {
 
-    $scope.loggedIn = false;
-    $scope.username = '';
-    
-    if(authFactory.isAuthenticated()) {
-        console.log("isAuthenticated");
-        $scope.loggedIn = true;
-        $scope.username = authFactory.getUsername();
-    }
-        
-    $scope.openLogin = function () {
-        console.log("openLogin");
-        ngDialog.open({ template: 'views/login.html', scope: $scope, className: 'ngdialog-theme-default', controller:"LoginCtrl" });
-    };
-    
-    $scope.logOut = function() {
-        console.log("logOut");
-       authFactory.logout();
-        $scope.loggedIn = false;
-        $scope.username = '';
-    };
-    
-    $rootScope.$on('login:Successful', function () {
-        console.log("login Successful");
-        $scope.loggedIn = authFactory.isAuthenticated();
-        $scope.username = authFactory.getUsername();
-    });
-        
-    $rootScope.$on('registration:Successful', function () {
-        console.log("registration Successful");
-        $scope.loggedIn = authFactory.isAuthenticated();
-        $scope.username = authFactory.getUsername();
-    });
-    
-    $scope.stateis = function(curstate) {
-       return $state.is(curstate);  
-    };
-    
-}])
-
-.controller('LoginCtrl', ['$scope', 'ngDialog', '$localStorage', 'authFactory', function ($scope, ngDialog, $localStorage, authFactory) {
-    
-    $scope.loginData = $localStorage.getObject('userinfo','{}');
-    
-    $scope.doLogin = function() {
-        if($scope.rememberMe)
-           $localStorage.storeObject('userinfo',$scope.loginData);
-
-        authFactory.login($scope.loginData);
-
-        ngDialog.close();
-
-    };
-            
-    $scope.openRegister = function () {
-        ngDialog.open({ template: 'views/register.html', scope: $scope, className: 'ngdialog-theme-default', controller:"RegisterCtrl" });
-    };
-
-    //$scope.getCurrentUser = AuthFactory.getCurrentUser();        
-    //console.log($scope.getCurrentUser);
-    
-}])
-
-.controller('RegisterCtrl', ['$scope', 'ngDialog', '$localStorage', 'authFactory', function ($scope, ngDialog, $localStorage, authFactory) {
-    
-    $scope.register={};
-    $scope.loginData={};
-    
-    $scope.doRegister = function() {
-        console.log('Doing registration', $scope.registration);
-
-        authFactory.register($scope.registration);
-        
-        ngDialog.close();
-
-    };
-}])
 
 .controller('AddHabitCtrl', ['$scope', 'moment', 'ngDialog', 'newHabitFactory', 
     function ($scope, moment, ngDialog, newHabitFactory) {
@@ -147,63 +70,127 @@ angular.module('DashboardCtrl', [])
     }
     
     $scope.isDayPerf = function (habitid, dayNb) {
-        
+        // if(dayNb == 6){
+        //     mapFactory.mafunctionadoree();
+        // }
         return value = mapFactory.getPerfData(habitid, dayNb);
         //if(value == 0) return false;
         //if(value == 1) return true;
     };
 
+    //$scope.$on('firstCompute', function() {
+        // console.log("FIRST COMPUTE - SCOPE.ALLHABITS: ",$scope.allhabits);
+        // for (var i = 0; i < $scope.allhabits.length; i++){
+        //     var obj = $scope.allhabits[i];
+        //     //$scope.toRecompute[obj._id] = false;
+        //     for (var dn = 0; dn < 7; dn++){
+
+        //         var myhabitid = obj._id;
+        //         var myhabitdate = dn;
+        //         var myhabitkey = mapFactory.makeKey(myhabitid,myhabitdate);
+        //         var statdate = statDateFactory.makeStatDate($scope.realDateArray[dn]);
+                
+        //         statisticFactory.getStatistic().query({habitid: myhabitid, statdate: statdate},
+        //             function(response){
+        //                 //console.log("GOT ANSWER! VALUE: ",response.value, " FOR HABITKEY ", myhabitkey)
+        //                 //$scope.dayPerformed.set(myhabitkey, response.value);
+        //                 if (response.value != undefined){
+        //                     mapFactory.pushPerfData(myhabitid, dn, response.value);
+        //                     console.log("data pushed: ",response.value);
+        //                 }
+        //                 if (response.value == undefined){
+        //                     var newStatistic = {
+        //                         date: statdate,
+        //                         value: 0
+        //                     };
+        //                     statisticFactory.getStatistic().save({habitid: habitid, statdate: statdate}, newStatistic,
+        //                         function(response){
+        //                             //console.log("--> SAVE_STATE_DURING_RECOMPUTING - value: ",response.value," - date: ",statdate);
+        //                             mapFactory.pushPerfData(habitid, dn, response.value);
+        //                             console.log("data pushed: ",response.value);
+        //                             //mapFactory.mafunctionadoree();
+        //                             $state.reload();
+        //                         },
+        //                         function(response){
+        //                         }
+        //                     );
+        //                 }
+        //             },
+        //             function(response){
+        //                 $scope.message = "Error: " + response.status + " " + response.statusText;
+        //             }
+        //         );
+
+        //     }
+        // }
+        // console.log("!!! PERF MAP !!!! ",mapFactory.perfmap);
+    //}
+
     $scope.$on('recomputeDaysPerf', function () {
         
         //console.log("RECOMPUTE DAYS PERF");
-        
+        console.log("FIRST COMPUTE - SCOPE.ALLHABITS: ",$scope.allhabits);
         for (var i = 0; i < $scope.allhabits.length; i++){
-                var obj = $scope.allhabits[i];
-                //$scope.toRecompute[obj._id] = false;
-                for (var dn = 0; dn < 7; dn++){
+            var obj = $scope.allhabits[i];
+            //$scope.toRecompute[obj._id] = false;
+            for (var dn = 0; dn < 7; dn++){
 
-                    var myhabitid = obj._id;
-                    var myhabitdate = dn;
-                    var myhabitkey = mapFactory.makeKey(myhabitid,myhabitdate);
-                    console.log("RECOMPUTE - KEY: ",myhabitkey);
-                    var statdate = statDateFactory.makeStatDate($scope.realDateArray[dn]);
-                    
-                    statisticFactory.getStatistic().query({habitid: myhabitid, statdate: statdate},
-                        function(response){
-                            //console.log("GOT ANSWER! VALUE: ",response.value, " FOR HABITKEY ", myhabitkey)
-                            //$scope.dayPerformed.set(myhabitkey, response.value);
-                            if (response.value != undefined){
-                                mapFactory.pushPerfData(myhabitid, dn, response.value);
-                                console.log("data pushed: ",response.value);
-                            }
-                            if (response.value == undefined){
-                                var newStatistic = {
-                                    date: statdate,
-                                    value: 0
-                                };
-                                statisticFactory.getStatistic().save({habitid: habitid, statdate: statdate}, newStatistic,
-                                    function(response){
-                                        //console.log("--> SAVE_STATE_DURING_RECOMPUTING - value: ",response.value," - date: ",statdate);
-                                        mapFactory.pushPerfData(habitid, dn, response.value);
-                                        console.log("data pushed: ",response.value);
-                                        //mapFactory.mafunctionadoree();
-                                        $state.reload();
-                                    },
-                                    function(response){
-                                    }
-                                );
-                            }
-                        },
-                        function(response){
-                            $scope.message = "Error: " + response.status + " " + response.statusText;
+                var myhabitid = obj._id;
+                var myhabitdate = dn;
+                var myhabitkey = mapFactory.makeKey(myhabitid,myhabitdate);
+                var statdate = statDateFactory.makeStatDate($scope.realDateArray[dn]);
+                
+                statisticFactory.getStatistic().query({habitid: myhabitid, statdate: statdate},
+                    function(response){
+                        //console.log("GOT ANSWER! VALUE: ",response.value, " FOR HABITKEY ", myhabitkey)
+                        //$scope.dayPerformed.set(myhabitkey, response.value);
+                        if (response.value != undefined){
+                            mapFactory.pushPerfData(myhabitid, dn, response.value);
+                            console.log("data pushed: ",response.value);
                         }
-                    );
+                        if (response.value == undefined){
+                            var newStatistic = {
+                                date: statdate,
+                                value: 0
+                            };
+                            statisticFactory.getStatistic().save({habitid: habitid, statdate: statdate}, newStatistic,
+                                function(response){
+                                    //console.log("--> SAVE_STATE_DURING_RECOMPUTING - value: ",response.value," - date: ",statdate);
+                                    mapFactory.pushPerfData(habitid, dn, response.value);
+                                    console.log("data pushed: ",response.value);
+                                    //mapFactory.mafunctionadoree();
+                                    $state.reload();
+                                },
+                                function(response){
+                                }
+                            );
+                        }
+                    },
+                    function(response){
+                        $scope.message = "Error: " + response.status + " " + response.statusText;
+                    }
+                );
 
-                }
             }
+        }
+        console.log("!!! PERF MAP !!!! ",mapFactory.perfmap);
+        var myLocalDateArray = $scope.realDateArray;
+        var todaysmoment = moment().startOf('day');
+        var todaysDate = new Date(todaysmoment);
+        function checkDate(adate){
+            var thedate = new Date(moment(adate).startOf('day'));
+            console.log("NEXT WEEK - todaysDate: ",todaysDate.getDate()," - adate: ",thedate.getDate());
+            return (thedate.getTime() == todaysDate.getTime());
+        }
+        var theindex = myLocalDateArray.findIndex(checkDate);
+
+        if(theindex != -1){
+            calendarFactory.setIsWeekCurrent(true);
+        }
         //$scope.loggedIn = AuthFactory.isAuthenticated();
         //$scope.username = AuthFactory.getUsername();
         mapFactory.mafunctionadoree();
+        $state.reload();
     });
 
     $scope.allusers = multiUsersFactory.query(
@@ -226,7 +213,7 @@ angular.module('DashboardCtrl', [])
     );
 
     $scope.openAddHabit = function () {
-        ngDialog.open({ template: 'views/addHabit.html', scope: $scope, className: 'ngdialog-theme-default', controller:"addHabitController" });
+        ngDialog.open({ template: 'views/addHabit.html', scope: $scope, className: 'ngdialog-theme-default', controller:"AddHabitCtrl" });
     };
 
     $scope.removeHabit = function (habitid) {
@@ -273,33 +260,43 @@ angular.module('DashboardCtrl', [])
 
     $scope.isItToday = function(val)
     {
-        switch(val)
+        if(calendarFactory.isWeekCurrent())
         {
-            case 0: return $scope.isToday[0];
-            case 1: return $scope.isToday[1];
-            case 2: return $scope.isToday[2];
-            case 3: return $scope.isToday[3];
-            case 4: return $scope.isToday[4];
-            case 5: return $scope.isToday[5];
-            case 6: return $scope.isToday[6];
+            return $scope.isToday[val];
         }
     };
 
     $scope.previousWeek = function()
     {
-        console.log("previous week");
         calendarFactory.lastWeek();
+        calendarFactory.setIsWeekCurrent(false);
         $state.reload();
     };
     $scope.nextWeek = function()
     {
-        console.log("next week");
-        calendarFactory.nextWeek();
+        var myLocalDateArray = $scope.realDateArray;
+        var todaysmoment = moment().startOf('day');
+        var todaysDate = new Date(todaysmoment);
+        function checkDate(adate){
+            var thedate = new Date(moment(adate).startOf('day'));
+            return (thedate.getTime() == todaysDate.getTime());
+        }
+        var theindex = myLocalDateArray.findIndex(checkDate);
+
+        if(theindex == -1){
+            calendarFactory.nextWeek();
+        }
+        else
+        {
+            calendarFactory.setIsWeekCurrent(true);
+        }
     };
     $scope.todaysWeek = function()
     {
+        calendarFactory.setIsWeekCurrent(true);
+        calendarFactory.todaysWeek();
+        console.log("CALENDAR FACTORY - SET WEEK IS CURRENT - TRUE");
         console.log("today's week");
-        calendarFactory.today();
     };
 
     

@@ -14,7 +14,7 @@ habitRouter.use(bodyParser.json());
 
 habitRouter.route('/:userid')
 
-.get(function (req, res, next) {
+.get(Verify.verifyOrdinaryUser, function (req, res, next) {
     Users.findById(req.params.userid, {habits:1}).stream()
     .on('data', function(doc){
         console.log("there i have a hold of the doc in the stream", doc);
