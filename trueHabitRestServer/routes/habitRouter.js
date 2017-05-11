@@ -151,7 +151,19 @@ habitRouter.route('/:habitid/statistic/:statdate')
             });
         }
         }
+        // var mastat = habit.statistics.statdate;
+        // console.log("la stat a retourner: ",mastat);
+        // res.json(habit.statistics[req.params.commentId]);
+        // console.log("habit.statistic with right date: ",habit.statistics[statdate]);
+
     );
+
+    // Habits.findById(req.params.habitid, function(err, habit){
+    //     if (err) next(err);
+    //     console.log("found the habit: ",habit);
+    //     habit.statistics.
+    // }
+
 })
 
 .put(Verify.verifyOrdinaryUser, function(req, res, next){
@@ -195,6 +207,50 @@ habitRouter.route('/:habitid/statistic/:statdate')
             });
         }
     });
+})
+
+.post(function(req, res, next){
+    console.log("-- -- POST STATISTIC get specific");
+    var cursor = Habits.findById(req.params.habitid)
+    .populate('statistics')
+    .cursor();
+
+    cursor.next().then(function(habit){
+        console.log("habit retrieved from cursor: ",habit);
+        console.log("statdate param: ",req.params.statdate);
+        var found = false;
+
+        for (var i = (habit.statistics.length - 1); i >= 0; i--) {
+            console.log("habit.statistics[i].date: ",habit.statistics[i].date);
+            if (habit.statistics[i].date.localeCompare(req.params.statdate) == 0){
+                console.log("FOUND THE STAT");
+                var statval = habit.statistics[i].value;
+                if (statval == 0)
+                {
+                    habit.statistics[i].value
+                }
+                found = true;
+                res.json(habit.statistics[i]);
+                i=0;
+            }
+        }
+        if (!found)
+        {
+            console.log("STATISTIC NOT FOUND - ASSUMING 0 - ADDING STAT");
+            var dateval = (req.params.statdate).toString();
+            var newstat = {
+                date: dateval,
+                value: 0
+            };
+            habit.statistics.push(newstat);
+            res.json(newstat);
+            habit.save(function(err, habit){
+                if (err) next(err);
+                console.log("updated habit with new stat");
+            });
+        }
+    }
+    );
 });
 
 module.exports = habitRouter; 

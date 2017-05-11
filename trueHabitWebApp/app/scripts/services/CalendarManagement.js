@@ -2,7 +2,7 @@
 
 angular.module('calendarManagement', [])
 
-.factory('calendarFactory', ['moment', '$rootScope' ,
+.factory('calendarFactory', ['moment','$rootScope',
   function (moment, $rootScope) {
 
   var isTodayArr = [];
@@ -24,35 +24,17 @@ angular.module('calendarManagement', [])
   calendarFac.getDisplayDateArr = function(){ return displayDateArr; };
   calendarFac.getIsTodayArr = function(){ return isTodayArr; };
 
-  // switch(moment().day())
-  // {
-  //       case 0:
-  //           dayOfTheWeek = 6;
-  //           break;
-  //       case 1:
-  //           dayOfTheWeek = 0;
-  //           break;
-  //       case 2:
-  //           dayOfTheWeek = 1;
-  //           break;
-  //       case 3:
-  //           dayOfTheWeek = 2;
-  //           break;
-  //       case 4:
-  //           dayOfTheWeek = 3;
-  //           break;
-  //       case 5:
-  //           dayOfTheWeek = 4;
-  //           break;
-  //       case 6:
-  //           dayOfTheWeek = 5;
-  //           break;
-  // };
-
 
   calendarFac.compileViewDates = function(){
     
     var currentViewMoment = moment(currentViewDate);
+
+    // var currentMoment = currentViewMoment.format("YYYYMMDD");
+    // var nowMoment = moment().format("YYYYMMDD");
+    if ((currentViewMoment.format("YYYYMMDD")).localeCompare(moment().format("YYYYMMDD")) == 0){
+      calendarFac.setIsWeekCurrent(true);
+    }
+
     var index = -1;
     var day = currentViewMoment.day();
     var date = currentViewMoment.date();
@@ -114,9 +96,7 @@ angular.module('calendarManagement', [])
         {
             h=index-i;
             var current = new Date(currentViewDate);
-            //console.log("currentViewDate: ",currentViewDate," - index: ", index," - h: ",h);
             current.setDate(current.getDate()-h);
-            //console.log("current: ", current);
             arr[i]=current.getDate();
             realDateArr[i]=current;
         }
@@ -127,7 +107,6 @@ angular.module('calendarManagement', [])
             h=i-index;
             var current = new Date(currentViewDate);
             current.setDate(current.getDate()+h);
-            //console.log("current: ", current);
             arr[i]=current.getDate();
             realDateArr[i]=current;
         }
@@ -135,26 +114,20 @@ angular.module('calendarManagement', [])
   };
 
   calendarFac.lastWeek = function(){
-    var curr = currentViewDate;
-
     currentViewDate.setDate(currentViewDate.getDate()-7);
-
-    console.log("BROADCAST - lastWeek method");
     $rootScope.$broadcast('recomputeDaysPerf');
-
   };
 
   calendarFac.nextWeek = function(){
-    var curr = currentViewDate;
-
     currentViewDate.setDate(currentViewDate.getDate()+7);
-
-    console.log("BROADCAST - nextWeek method");
     $rootScope.$broadcast('recomputeDaysPerf');
   };
 
   calendarFac.todaysWeek = function(){
-    console.log("TODAYS WEEK BROADCAST - nextWeek method");
+    console.log("OLD CURRENT VIEW DATE: ",currentViewDate);
+    currentViewDate = new Date();
+    console.log("NEW CURRENT VIEW DATE: ",currentViewDate);
+    //calendarFac.compileViewDates();
     $rootScope.$broadcast('recomputeDaysPerf');
   };
 

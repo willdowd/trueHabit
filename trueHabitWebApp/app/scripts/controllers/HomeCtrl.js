@@ -3,8 +3,8 @@
 angular.module('HomeCtrl', [])
 
 
-.controller('HomeCtrl', ['$scope','$rootScope','$state','ngDialog','authFactory', 'mapFactory', 
-    function ($scope,$rootScope,$state,ngDialog,authFactory,mapFactory) {
+.controller('HomeCtrl', ['$scope','$rootScope','$state','ngDialog','authFactory', 'recomputeFactory', 
+    function ($scope,$rootScope,$state,ngDialog,authFactory,recomputeFactory) {
     
     $scope.loggedIn = false;
     $scope.username = '';
@@ -26,7 +26,7 @@ angular.module('HomeCtrl', [])
 
     $scope.openDashboard = function () {
         console.log("OPEN DASHBOARD CALLED");
-        mapFactory.recompute();
+        recomputeFactory.generalRecompute();
         //$rootScope.$broadcast('recomputeDaysPerf');
         //authFactory.recompute();
     };
@@ -58,7 +58,6 @@ angular.module('HomeCtrl', [])
     $scope.loggedIn = false;
     $scope.username = '';
     
-    console.log("HeaderCtrl: isAuthenticated call");
     if(authFactory.isAuthenticated()) {
         $scope.loggedIn = true;
         $scope.username = authFactory.getUsername();
@@ -77,8 +76,6 @@ angular.module('HomeCtrl', [])
     $rootScope.$on('login:Successful', function () {
         $scope.loggedIn = authFactory.isAuthenticated();
         $scope.username = authFactory.getUsername();
-        console.log("ON LOGIN SUCCESSFUL BROADCAST FIRST COMPUTE");
-        //$rootScope.$broadcast('firstCompute');
     });
         
     $rootScope.$on('registration:Successful', function () {

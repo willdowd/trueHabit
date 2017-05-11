@@ -6,23 +6,18 @@ angular.module('accountManagement', [])
 .factory('$localStorage', ['$window', function ($window) {
     return {
         store: function (key, value) {
-          console.log("local storage - store");
             $window.localStorage[key] = value;
         },
         get: function (key, defaultValue) {
-          console.log("local storage - get");
             return $window.localStorage[key] || defaultValue;
         },
         remove: function (key) {
-          console.log("local storage - remove");
             $window.localStorage.removeItem(key);
         },
         storeObject: function (key, value) {
-          console.log("local storage - storeObject");
             $window.localStorage[key] = JSON.stringify(value);
         },
         getObject: function (key, defaultValue) {
-          console.log("local storage - getObject");
             return JSON.parse($window.localStorage[key] || defaultValue);
         }
     };
@@ -35,7 +30,6 @@ angular.module('accountManagement', [])
     var isAuthenticated = false;
     var username = '';
     var authToken;
-    var userId;
     
 
   function loadUserCredentials() {
@@ -54,14 +48,12 @@ angular.module('accountManagement', [])
     isAuthenticated = true;
     username = credentials.username;
     authToken = credentials.token;
- 
     // Set the token as header for your requests!
     $http.defaults.headers.common['x-access-token'] = authToken;
     $rootScope.$broadcast('recomputeDaysPerf');
   }
  
   function destroyUserCredentials() {
-    console.log("destroyCredentials");
     authToken = undefined;
     username = '';
     isAuthenticated = false;
@@ -120,8 +112,6 @@ angular.module('accountManagement', [])
               $rootScope.$broadcast('recomputeDaysPerf');
            },
            function(response){
-            
-            console.log("authFac - register - save DIDN'T WORK");
               var message = '\
                 <div class="ngdialog-message">\
                 <div><h3>Registration Unsuccessful</h3></div>' +
@@ -136,21 +126,12 @@ angular.module('accountManagement', [])
     };
     
     authFac.isAuthenticated = function() {
-        console.log("method isAuthenticated called");
         return isAuthenticated;
     };
     
     authFac.getUsername = function() {
         return username;  
     };
-
-    authFac.getUserId = function() {
-        return userId;  
-    };
-    authFac.setUserId = function(user_id) {
-        userId = user_id;  
-    };
-
 
     loadUserCredentials();
     
