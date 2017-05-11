@@ -13,12 +13,7 @@ angular.module('calendarManagement', [])
   var dayOfTheWeek = -1;
 
   var calendarFac = {};
-    // isTodayArr: isTodayArr,
-    // realDateArray: realDateArr,
-    // displayDateArr: displayDateArr,
-    // dayOfTheWeek: dayOfTheWeek,
-    // weekIsCurrent: weekIsCurrent
-  //};
+
 
   calendarFac.getRealDateArray = function(){ return realDateArr; };
   calendarFac.getDisplayDateArr = function(){ return displayDateArr; };
@@ -29,8 +24,7 @@ angular.module('calendarManagement', [])
     
     var currentViewMoment = moment(currentViewDate);
 
-    // var currentMoment = currentViewMoment.format("YYYYMMDD");
-    // var nowMoment = moment().format("YYYYMMDD");
+    
     if ((currentViewMoment.format("YYYYMMDD")).localeCompare(moment().format("YYYYMMDD")) == 0){
       calendarFac.setIsWeekCurrent(true);
     }
@@ -124,10 +118,7 @@ angular.module('calendarManagement', [])
   };
 
   calendarFac.todaysWeek = function(){
-    console.log("OLD CURRENT VIEW DATE: ",currentViewDate);
     currentViewDate = new Date();
-    console.log("NEW CURRENT VIEW DATE: ",currentViewDate);
-    //calendarFac.compileViewDates();
     $rootScope.$broadcast('recomputeDaysPerf');
   };
 
