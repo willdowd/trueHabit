@@ -23,21 +23,19 @@ angular.module('DashboardCtrl', [])
     };
 }])
 
-
-
 .controller('DashboardCtrl', ['$scope', '$rootScope', 
     'moment', 'ngDialog', '$state', '$stateParams', 
     '$localStorage', 'authFactory', 'habitFactory', 
     'singleUsersFactory', 'multiUsersFactory', 'statisticFactory',
-    'calendarFactory', 'mapFactory',
+    'calendarFactory', 'mapFactory', 'weeklyScoreFactory',
     'statDateFactory', 'recomputeFactory',
     function ($scope, $rootScope, 
         moment, ngDialog, $state, $stateParams, 
         $localStorage, authFactory, habitFactory, 
         singleUsersFactory, multiUsersFactory, statisticFactory,
-        calendarFactory, mapFactory,
+        calendarFactory, mapFactory,weeklyScoreFactory,
         statDateFactory,recomputeFactory) {
-    
+
     
     singleUsersFactory.query({username: authFactory.getUsername()},
         function(response){
@@ -50,6 +48,8 @@ angular.module('DashboardCtrl', [])
     calendarFactory.compileViewDates();
     var realDateArray = calendarFactory.getRealDateArray();
     var isToday = calendarFactory.getIsTodayArr();
+
+    $scope.weeklyScore = weeklyScoreFactory.computeWeeklyScore();
 
     // $scope variables because used in child scope AddNewHabitCtrl - not used in Dashboard view.
     //$scope.user_id = authFactory.getUserId();
@@ -165,5 +165,13 @@ angular.module('DashboardCtrl', [])
         recomputeFactory.generalRecompute();
     });
     
+
+
 }])
+
 ;
+
+
+
+
+

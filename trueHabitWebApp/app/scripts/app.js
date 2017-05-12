@@ -8,6 +8,7 @@ angular.module('trueHabit', [
     'accountManagement', 
     'habitManagement', 
     'calendarManagement',
+    'scoreManagement',
     'AccountCtrl',
     'DashboardCtrl',
     'HomeCtrl'])
