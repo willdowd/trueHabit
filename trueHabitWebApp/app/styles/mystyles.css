@@ -102,6 +102,9 @@
 .special-day {
   color: #ff884d;
 }
+.isdisabled {
+  color: grey;
+}
 .isdone {
   color: green;
 }

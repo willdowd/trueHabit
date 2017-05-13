@@ -5,12 +5,12 @@ angular.module('calendarManagement', [])
 .factory('calendarFactory', ['moment','$rootScope',
   function (moment, $rootScope) {
 
-  var isTodayArr = [];
+  var isTodayArr = [false,false,false,false,false,false,false];
   var realDateArr = [];
   var displayDateArr = [];
   var weekIsCurrent = true;
   var currentViewDate = new Date();
-  var dayOfTheWeek = -1;
+  var todayDayNb = -1;
 
   var calendarFac = {};
 
@@ -18,91 +18,108 @@ angular.module('calendarManagement', [])
   calendarFac.getRealDateArray = function(){ return realDateArr; };
   calendarFac.getDisplayDateArr = function(){ return displayDateArr; };
   calendarFac.getIsTodayArr = function(){ return isTodayArr; };
+  calendarFac.getTodayDayNb = function(){ return todayDayNb; };
 
+  calendarFac.compileAlwaysThisWeek = function(){
+    var thisWeekTodayArr = [];
+    var thisWeekRealDateArr = [];
+    var thisWeekDisplayDateArr = [];
+    calendarFac.compileDates(new Date(), thisWeekTodayArr,thisWeekRealDateArr,thisWeekDisplayDateArr);
+    return thisWeekRealDateArr;
+  }
 
+  
   calendarFac.compileViewDates = function(){
     
     var currentViewMoment = moment(currentViewDate);
-
-    
     if ((currentViewMoment.format("YYYYMMDD")).localeCompare(moment().format("YYYYMMDD")) == 0){
       calendarFac.setIsWeekCurrent(true);
     }
+    calendarFac.compileDates(currentViewDate, isTodayArr, realDateArr, displayDateArr);
 
-    var index = -1;
-    var day = currentViewMoment.day();
-    var date = currentViewMoment.date();
-    switch(day){
-        case 0:
-            displayDateArr[6] = date;
-            realDateArr[6]= currentViewDate;
-            index = 6;
-            isTodayArr[6] = true;
-            break;
-        case 1:
-            displayDateArr[0] = date;
-            realDateArr[0]= currentViewDate;
-            index = 0;
-            isTodayArr[0] = true;
-            break;
-        case 2:
-            displayDateArr[1] = date;
-            realDateArr[1] = currentViewDate;
-            index = 1;
-            isTodayArr[1] = true;
-            break;
-        case 3:
-            displayDateArr[2] = date;
-            realDateArr[2]= currentViewDate;
-            index = 2;
-            isTodayArr[2] = true;
-            break;
-        case 4:
-            displayDateArr[3] = date;
-            realDateArr[3]= currentViewDate;
-            index = 3;
-            isTodayArr[3] = true;
-            break;
-        case 5:
-            displayDateArr[4] = date;
-            realDateArr[4]= currentViewDate;
-            index = 4;
-            isTodayArr[4] = true;
-            break;
-        case 6:
-            displayDateArr[5] = date;
-            realDateArr[5]= currentViewDate;
-            index = 5;
-            isTodayArr[5] = true;
-            break;
-    }
-    dayOfTheWeek = index;
-    isTodayArr[index]=true;
-    realDateArr[index]=currentViewDate;
-
-    processDateArray(index, displayDateArr);
   };
 
-  var processDateArray = function(index, arr){
+
+  calendarFac.compileDates = function(goalDate, myIsTodayArr, myrealDateArr,mydisplayDateArr){
+    
+    var currentViewMoment = moment(goalDate);
+    var day = currentViewMoment.day();
+    var date = currentViewMoment.date();
+
+    switch(day){
+        case 0:
+            // mydisplayDateArr[6] = date;
+            // realDateArr[6]= goalDate;
+            todayDayNb = 6;
+            // isTodayArr[6] = true;
+            break;
+        case 1:
+            // mydisplayDateArr[0] = date;
+            // realDateArr[0]= goalDate;
+            todayDayNb = 0;
+            // isTodayArr[0] = true;
+            break;
+        case 2:
+            // mydisplayDateArr[1] = date;
+            // realDateArr[1] = goalDate;
+            todayDayNb = 1;
+            // isTodayArr[1] = true;
+            break;
+        case 3:
+            // mydisplayDateArr[2] = date;
+            // realDateArr[2]= goalDate;
+            todayDayNb = 2;
+            // isTodayArr[2] = true;
+            break;
+        case 4:
+            // mydisplayDateArr[3] = date;
+            // realDateArr[3]= goalDate;
+            todayDayNb = 3;
+            // isTodayArr[3] = true;
+            break;
+        case 5:
+            // mydisplayDateArr[4] = date;
+            // realDateArr[4]= goalDate;
+            todayDayNb = 4;
+            // isTodayArr[4] = true;
+            break;
+        case 6:
+            // mydisplayDateArr[5] = date;
+            // realDateArr[5]= goalDate;
+            todayDayNb = 5;
+            // isTodayArr[5] = true;
+            break;
+    }
+
+    myIsTodayArr[todayDayNb]=true;
+    myrealDateArr[todayDayNb]=goalDate;
+    mydisplayDateArr[todayDayNb]=date;
+
+    processDateArray(todayDayNb, mydisplayDateArr, myrealDateArr,goalDate);
+  }
+
+  
+
+  var processDateArray = function(index,arr,myrealDateArr,goalDate){
     var h = -1;
     if(index != 0){
         for(var i=index-1;i>=0;i--)
         {
             h=index-i;
-            var current = new Date(currentViewDate);
+            var current = new Date(goalDate);
             current.setDate(current.getDate()-h);
             arr[i]=current.getDate();
-            realDateArr[i]=current;
+            myrealDateArr[i]=current;
         }
     }
     if(index !=6){
         for(var i=index+1;i<=6;i++)
         {
             h=i-index;
-            var current = new Date(currentViewDate);
+            var current = new Date(goalDate);
             current.setDate(current.getDate()+h);
             arr[i]=current.getDate();
-            realDateArr[i]=current;
+            myrealDateArr[i]=current;
         }
     }
   };

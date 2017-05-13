@@ -50,7 +50,8 @@ angular.module('accountManagement', [])
     authToken = credentials.token;
     // Set the token as header for your requests!
     $http.defaults.headers.common['x-access-token'] = authToken;
-    $rootScope.$broadcast('recomputeDaysPerf');
+    // $rootScope.$broadcast('recomputeDaysPerf');
+    console.log("USE CREDENTIALS");
   }
  
   function destroyUserCredentials() {
@@ -67,7 +68,8 @@ angular.module('accountManagement', [])
            function(response) {
               storeUserCredentials({username:loginData.username, token: response.token});
               $rootScope.$broadcast('login:Successful');
-              $rootScope.$broadcast('recomputeDaysPerf');
+              // $rootScope.$broadcast('recomputeDaysPerf');
+              console.log("LOGIN SUCCESSFUL");
            },
            function(response){
               isAuthenticated = false;
@@ -109,7 +111,7 @@ angular.module('accountManagement', [])
             }
            
               $rootScope.$broadcast('registration:Successful');
-              $rootScope.$broadcast('recomputeDaysPerf');
+              // $rootScope.$broadcast('recomputeDaysPerf');
            },
            function(response){
               var message = '\

@@ -9,5 +9,6 @@ angular.module('AccountCtrl', [])
     if(authFactory.isAuthenticated()) {
         $scope.username = authFactory.getUsername();
     }
+
 }])
 ;

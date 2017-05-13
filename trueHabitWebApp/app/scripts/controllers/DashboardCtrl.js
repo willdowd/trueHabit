@@ -39,8 +39,8 @@ angular.module('DashboardCtrl', [])
     
     singleUsersFactory.query({username: authFactory.getUsername()},
         function(response){
-          console.log("method habitFac. getAllHabits: ",response.habits);
-          $scope.allHabits = response.habits;
+            $scope.allHabits = response.habits;
+            $scope.weeklyScore = weeklyScoreFactory.computeWeeklyScore($scope.allHabits);
         },
         function(response){
           //exception management
@@ -49,7 +49,16 @@ angular.module('DashboardCtrl', [])
     var realDateArray = calendarFactory.getRealDateArray();
     var isToday = calendarFactory.getIsTodayArr();
 
-    $scope.weeklyScore = weeklyScoreFactory.computeWeeklyScore();
+    $scope.isButtonDisabled = function(dayNb)
+    {
+        return (calendarFactory.isWeekCurrent() && (dayNb > calendarFactory.getTodayDayNb()));
+    }
+
+    if (mapFactory.getMapSize() == 0)
+    {
+        console.log("MAP SIZE == 0 --> RECOMPUTE");
+        recomputeFactory.generalRecompute();
+    }
 
     // $scope variables because used in child scope AddNewHabitCtrl - not used in Dashboard view.
     //$scope.user_id = authFactory.getUserId();
@@ -60,7 +69,7 @@ angular.module('DashboardCtrl', [])
     //console.log("real date array: ",realDateArray);
 
     $scope.isdone = function(habitid, dayNb){
-        return (mapFactory.getPerfData(habitid, dayNb) == 1);
+        return ((mapFactory.getPerfData(habitid, dayNb) == 1) );//&& (!isButtonDisabled(dayNb)) );
     }
     
     $scope.isDayPerf = function (habitid, dayNb) {
@@ -73,7 +82,12 @@ angular.module('DashboardCtrl', [])
     };
 
     $scope.openAddHabit = function () {
-        ngDialog.open({ template: 'views/addHabit.html', scope: $scope, className: 'ngdialog-theme-default', controller:"AddHabitCtrl" });
+        ngDialog.open({ 
+            template: 'views/addHabit.html', 
+            scope: $scope, 
+            className: 'ngdialog-theme-default', 
+            controller:"AddHabitCtrl" 
+        });
     };
 
     $scope.removeHabit = function (habitid) {
@@ -86,6 +100,22 @@ angular.module('DashboardCtrl', [])
         });
     };
 
+    $scope.resetHabit = function (habitid) {
+        ngDialog.openConfirm({
+            template: 'views/resetHabitModal.html',
+            className: 'ngdialog-theme-default'
+        }).then(function () {
+            statisticFactory.resetStatistics(habitid);
+        }, function () {
+        });
+    };
+
+    $scope.viewStatistics = function (habitid) {
+        ngDialog.open({
+            template: '<h4>View Statistics</h4><p>Feature coming soon</p>',
+            plain: true
+        });
+    };
 
     $scope.switchState = function(habitid, dayNb){
 
@@ -115,8 +145,6 @@ angular.module('DashboardCtrl', [])
             }
         );
     };
-
-
 
     $scope.isItToday = function(val)
     {

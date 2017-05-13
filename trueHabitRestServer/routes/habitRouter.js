@@ -81,21 +81,23 @@ habitRouter.route('/:habitid')//route('/:userid/removehabit/:habitid')
 
 habitRouter.route('/:habitid/statistic')
 
-// .get(Verify.verifyOrdinaryUser, function(req, res, next){
-//     console.log("GET HABIT STATISTIC WITHOUT USER ID");
-//     console.log("GET HABIT STATISTIC WITHOUT USER ID - USER ID IN REQ: ",req.decoded._id);
-//     Habits.findById(req.params.habitid, function(err, habit){
-//         if (err) next(err);
-//         console.log("get habit statistics - retrieved habit by id");
-//         if (habit.statistic.length != 0)
-//             res.json(habit.statistic);
-//         else{
-//             var date = new Date();
-//             habit.statistic[date] = 0;
-//             res.json(undefined);
-//         }
-//     })
-// })
+.delete(Verify.verifyOrdinaryUser, function(req, res, next){
+    Habits.findById(req.params.habitid, function(err, habit){
+        if (err) next(err);
+        console.log("RESET - get habit statistics - retrieved habit by id");
+        if (habit.statistics.length != 0){
+            console.log("RESET - habit.statistics.length is not null");
+            habit.statistics = [];
+            habit.save(function(err, habit){
+                if (err) next(err);
+                console.log("RESET - updated habit with empty statistics");
+                res.writeHead(200, {
+                    'Content-Type': 'text/plain'
+                });
+            });
+        }
+    })
+})
 
 .post(Verify.verifyOrdinaryUser, function(req, res, next){
     console.log("POST STAT CALLED");
@@ -113,8 +115,6 @@ habitRouter.route('/:habitid/statistic')
 habitRouter.route('/:habitid/statistic/:statdate')
 
 .get(Verify.verifyOrdinaryUser, function(req, res, next){
-    console.log("GET HABIT STATISTIC WITHOUT USER ID");
-    console.log("GET HABIT STATISTIC WITHOUT USER ID - USER ID IN REQ: ",req.decoded._doc._id);
     console.log("-- -- -- GET STAT CALLED: ",req.params.statdate);
     var cursor = Habits.findById(req.params.habitid)
     .populate('statistics')

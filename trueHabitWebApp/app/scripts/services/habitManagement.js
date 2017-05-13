@@ -74,6 +74,9 @@ angular.module('habitManagement', [])
     return habitid.toString()+dayNb.toString();
   };
 
+  mapFac.getMapSize = function(){
+    return performanceMap.length;
+  }
 
   mapFac.pushPerfData = function(habitid, dayNb, perf){
     
@@ -87,7 +90,7 @@ angular.module('habitManagement', [])
     //console.log("index: ",index);
     
     if (index == -1){
-      console.log("push in performance Map -  mapkey: ",mapkey," - value: ",perf);
+      //console.log("push in performance Map -  mapkey: ",mapkey," - value: ",perf);
       performanceMap.push({key: mapkey, value: perf});
     }
     performanceMap[index] = ({key: mapkey, value: perf});
@@ -146,28 +149,20 @@ angular.module('habitManagement', [])
     singleUsersFactory.query({username: username},
         
       function(response){
-            
 
       var allHabits = response.habits;
 
-
-      console.log("RECOMPUTE - ALLHABITS: ",allHabits);
-
       var arrayofdates = calendarFactory.getRealDateArray();
-      console.log("RECOMPUTE - ARRAY OF DATES: ",arrayofdates);
 
       for (var i = 0; i < allHabits.length; i++){
-        console.log("i: ",i);
         var obj = allHabits[i];
         //$scope.toRecompute[obj._id] = false;
         for (var dayNb = 0; dayNb < 7; dayNb++){
-          console.log("dn: ",dayNb);
           // var myhabitid = obj._id;
           // var myhabitdate = dn;
           // var myhabitkey = mapFactory.makeKey(obj._id,dn);
           // console.log("RECOMPUTE - my HABIT KEY: ",myhabitkey);
           var statdate = statDateFactory.makeStatDate(arrayofdates[dayNb]);
-          console.log("statdate: ",statdate);
 
           getStatAndPopulateMap(obj._id,statdate,dayNb,i,allHabits.length);
 
@@ -187,8 +182,6 @@ angular.module('habitManagement', [])
       function(response){
           if (response.value != undefined){
               mapFactory.pushPerfData(habitid, dayNb, response.value);
-              console.log("AFTER QUERY - data pushed: ",response.value);
-              console.log("i: ",i," - dn: ",dayNb);
               if (  (i == (length-1)) && dayNb == 6)
               {
                 console.log("!!!END OF THE RECOMPUTE - SIMPLE!!!");
@@ -204,7 +197,6 @@ angular.module('habitManagement', [])
                   function(response){
                       //console.log("--> SAVE_STATE_DURING_RECOMPUTING - value: ",response.value," - date: ",statdate);
                       mapFactory.pushPerfData(habitid, dn, response.value);
-                      console.log("AFTER SAVE - data pushed: ",response.value);
                       //mapFactory.mafunctionadoree();
                       //$state.reload();
 
@@ -253,6 +245,13 @@ angular.module('habitManagement', [])
 
 
   var statFac = {};
+
+  statFac.resetStatistics = function(habitid) {
+    var resource = $resource(baseURL + "habits/:habitid/statistic", {habitid:"@habitid"})
+      .delete({habitid: habitid},null,function(response){
+        $state.reload();
+      });
+  };
 
   statFac.getStatistic = function(){
     
