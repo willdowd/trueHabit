@@ -10,7 +10,7 @@ var authenticate = require('./authenticate');
 
 var config = require('./config');
 
-mongoose.connect(config.mongoUrl);// || 'mongodb://localhost:27017/trueHabit');
+mongoose.connect(config.mongoUrl || 'mongodb://localhost:27017/trueHabit');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
@@ -25,16 +25,16 @@ var habitRouter = require('./routes/habitRouter');
 var app = express();
 
 // Secure traffic only
-app.all('*', function(req, res, next){
-    //console.log('req header: ',req.header);
-    console.log('req start: ',req.secure, req.hostname, req.url, app.get('port'));
-  if (req.secure) {
-    return next();
-  };
-  console.log('res redirect to: https://'+req.hostname+':'+app.get('secPort')+req.url);
-  res.redirect('https://'+req.hostname+':'+app.get('secPort')+req.url);
-  console.log('res redirect done');
-});
+// app.all('*', function(req, res, next){
+//     //console.log('req header: ',req.header);
+//     console.log('req start: ',req.secure, req.hostname, req.url, app.get('port'));
+//   if (req.secure) {
+//     return next();
+//   };
+//   console.log('res redirect to: https://'+req.hostname+':'+app.get('secPort')+req.url);
+//   res.redirect('https://'+req.hostname+':'+app.get('secPort')+req.url);
+//   console.log('res redirect done');
+// });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
