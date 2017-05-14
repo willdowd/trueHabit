@@ -27,6 +27,14 @@ var habitSchema = new Schema({
         type: Boolean,
         default: true
     },
+    beststreak:{
+        type: Number,
+        default: 0
+    },
+    currentstreak:{
+        type: Number,
+        default: 0
+    },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User' 

@@ -6,29 +6,27 @@ angular.module('HomeCtrl', [])
 .controller('HomeCtrl', ['$scope','$rootScope','$state','ngDialog','authFactory', 'recomputeFactory', 
     function ($scope,$rootScope,$state,ngDialog,authFactory,recomputeFactory) {
     
-    $scope.loggedIn = false;
-    $scope.username = '';
-    
+    $scope.loggedIn         = false;
+    $scope.username         = '';
+    $scope.openLogin        = openLogin;
+    $scope.openRegister     = openRegister;
+    $scope.openDashboard    = openDashboard;
 
-    console.log("HomeCtrl: isAuthenticated call");
     if(authFactory.isAuthenticated()) {
         $scope.loggedIn = true;
         $scope.username = authFactory.getUsername();
     }
 
-    $scope.openLogin = function () {
+    function openLogin() {
         ngDialog.open({ template: 'views/login.html', scope: $scope, className: 'ngdialog-theme-default', controller:"LoginCtrl" });
     };
 
-    $scope.openRegister = function () {
+    function openRegister() {
         ngDialog.open({ template: 'views/register.html', scope: $scope, className: 'ngdialog-theme-default', controller:"RegisterCtrl" });
     };
 
-    $scope.openDashboard = function () {
-        console.log("OPEN DASHBOARD CALLED");
+    function openDashboard() {
         recomputeFactory.generalRecompute();
-        //$rootScope.$broadcast('recomputeDaysPerf');
-        //authFactory.recompute();
     };
     
     
@@ -46,28 +44,39 @@ angular.module('HomeCtrl', [])
 
     $rootScope.$on('logout:Successful', function () {
         console.log("logout:Successful broadcasted and received by HomeCtrl");
-        $scope.loggedIn = authFactory.isAuthenticated();
+        $scope.loggedIn = false;
         $scope.username = '';
         $state.go('app');
     });
 
 }])
 
-.controller('HeaderCtrl', ['$scope', '$state', '$rootScope', 'ngDialog', 'authFactory', function ($scope, $state, $rootScope, ngDialog, authFactory) {
+.controller('HeaderCtrl', ['$scope', '$state', '$rootScope', 
+    'ngDialog', 'authFactory', 'recomputeFactory',
+    function ($scope, $state, $rootScope, 
+        ngDialog, authFactory,recomputeFactory) {
 
-    $scope.loggedIn = false;
-    $scope.username = '';
+    $scope.loggedIn     = false;
+    $scope.username     = '';
+    $scope.openLogin    = openLogin;
+    $scope.openMyAccount= openMyAccount;
+    $scope.logOut       = logOut;
+    $scope.stateis      = stateis;
     
     if(authFactory.isAuthenticated()) {
         $scope.loggedIn = true;
         $scope.username = authFactory.getUsername();
     }
         
-    $scope.openLogin = function () {
+    function openLogin() {
         ngDialog.open({ template: 'views/login.html', scope: $scope, className: 'ngdialog-theme-default', controller:"LoginCtrl" });
     };
+
+    function openMyAccount(){
+        recomputeFactory.generalRecompute();
+    }
     
-    $scope.logOut = function() {
+    function logOut() {
        authFactory.logout();
         $scope.loggedIn = false;
         $scope.username = '';
@@ -82,8 +91,15 @@ angular.module('HomeCtrl', [])
         $scope.loggedIn = authFactory.isAuthenticated();
         $scope.username = authFactory.getUsername();
     });
+
+    $rootScope.$on('logout:Successful', function () {
+        console.log("logout:Successful broadcasted and received by HomeCtrl");
+        $scope.loggedIn = false;
+        $scope.username = '';
+        $state.go('app');
+    });
     
-    $scope.stateis = function(curstate) {
+    function stateis(curstate) {
        return $state.is(curstate);  
     };
     
@@ -91,19 +107,18 @@ angular.module('HomeCtrl', [])
 
 .controller('LoginCtrl', ['$scope', 'ngDialog', '$localStorage', 'authFactory', function ($scope, ngDialog, $localStorage, authFactory) {
     
-    $scope.loginData = $localStorage.getObject('userinfo','{}');
-    
-    $scope.doLogin = function() {
+    $scope.loginData    = $localStorage.getObject('userinfo','{}');
+    $scope.doLogin      = doLogin;
+    $scope.openRegister = openRegister;
+
+    function doLogin() {
         if($scope.rememberMe)
            $localStorage.storeObject('userinfo',$scope.loginData);
-
         authFactory.login($scope.loginData);
-
         ngDialog.close();
-
     };
-            
-    $scope.openRegister = function () {
+    
+    function openRegister() {
         ngDialog.open({ template: 'views/register.html', scope: $scope, className: 'ngdialog-theme-default', controller:"RegisterCtrl" });
     };
     

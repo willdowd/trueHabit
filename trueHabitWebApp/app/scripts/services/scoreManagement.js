@@ -5,8 +5,6 @@ angular.module('scoreManagement', [])
 .factory('weeklyScoreFactory', ['$rootScope','mapFactory','calendarFactory',
   function ($rootScope,mapFactory,calendarFactory) {
 
-
-
   var weeklyScoreFac = {};
 
   var maxScore;
@@ -46,8 +44,6 @@ angular.module('scoreManagement', [])
 
     return {score: score, maxScore: maxScore, completion: completion};
   };
-
-
 
   return weeklyScoreFac;
 }])

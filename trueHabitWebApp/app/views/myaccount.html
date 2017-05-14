@@ -1,24 +1,21 @@
 
 <div class="container">
-    <div class="row">
-        <div class="col-xs-12">
-           <ul class="breadcrumb">
-               <li><a href="index.html">Home</a></li>
-               <li class="active">My Account</li>
-           </ul>
-        </div>
-        <div class="col-xs-12">
-           <h3>My Info</h3>
-           <hr>
-        </div>
+    <div class="row row-content text-center">
+           <h3>Account Information and Statistics</h3>
     </div>
-    <div class="row">
-        <div class="col-xs-12">
-          <p>{{username}}</p>
-        </div>
+    <div class="row text-center">
+          <h5><span class="dashboard-title">Username :</span>  {{username}}</h5>
     </div>
-    <div class="row row-content">
-      {{myDataSource}}
+    <div class="row text-center">
+          <h5><span class="dashboard-title">Your score so far :</span>  {{weeklyScore.score}} / {{weeklyScore.maxScore}}</h5>
+    </div>
+    <div class="row text-center">
+        <h5 class="dashboard-title">Your habits and streaks :</h5>
+        <ul>
+            <li id="listOfHabits" ng-repeat="habit in allHabits | orderBy:'-currentstreak'">
+                <h5>{{habit.name}}: {{getCurrentStreak(habit._id)}}</h5>
+            </li>
+        </ul>
     </div>
 
 </div>

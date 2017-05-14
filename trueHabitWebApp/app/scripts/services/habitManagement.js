@@ -3,28 +3,33 @@
 angular.module('habitManagement', [])
 .constant("baseURL", "https://localhost:3443/")
 
-.factory('habitFactory', ['$resource', '$state', 'baseURL', 'authFactory', 'singleUsersFactory',
- function ($resource, $state, baseURL, authFactory,singleUsersFactory) {
+.factory('habitFactory', ['$resource', '$state', 'baseURL', '$rootScope',
+ function ($resource, $state, baseURL,$rootScope) {
   
-  var habitFac = {};
-  
-  habitFac.habitResource = function() {
-    return $resource(baseURL + "habits/:habitid", {habitid:"@habitid"}, {
-            'update': {
-                method: 'PUT'
-            }
-        });
+  var habitFac = {
+    deleteHabit: deleteHabit,
+    habitResourceFromHabitid: habitResourceFromHabitid,
+    addHabit: addHabit
   };
-  var allHabits;
 
-  habitFac.deleteHabit = function(habitid) {
+  return habitFac;
+
+  function addHabit(newHabit) {
+    $resource(baseURL + "habits/:habitid", null)
+    .save(newHabit, function(response){
+      $state.reload();
+      },function(response){
+    });
+  };
+
+  function deleteHabit(habitid) {
     $resource(baseURL + "habits/:habitid", {habitid:"@habitid"})
       .delete({habitid: habitid},null,function(response){
-        $state.reload();
+        $rootScope.$broadcast('recomputeDaysPerf');
       });
   };
 
-  habitFac.habitResourceFromHabitid = function() {
+  function habitResourceFromHabitid() {
     return $resource(baseURL + "habits/:habitid", null, {
             'update': {
               method: 'PUT'
@@ -33,150 +38,121 @@ angular.module('habitManagement', [])
     });
   };
 
-  return habitFac;
-
-}])
-
-.factory('newHabitFactory', ['$resource', '$state', 'baseURL', 'habitFactory', 
-  function ($resource, $state, baseURL, habitFactory) {
-  
-  var newHabitFac = {
-  };
-
-  newHabitFac.addHabit = function(newHabit) {
-
-    habitFactory.habitResource().save(
-      newHabit, 
-      function(response){
-        $state.reload();
-      },
-      function(response){
-      });
-  };
-
-  return newHabitFac;
-
 }])
 
 
-.factory('mapFactory', ['$resource', 'baseURL', 'habitFactory', 'authFactory', 
-  'singleUsersFactory','calendarFactory','statDateFactory',
-  'statisticFactory', '$state', 
-  function ($resource, baseURL,habitFactory,authFactory,
-    singleUsersFactory,calendarFactory,statDateFactory,
-    statisticFactory,$state) {
+.factory('mapFactory', [ 
+  function () {
 
   var performanceMap = [];
+  var bestStreakArray = [];
+  var currentStreakArray = [];
 
-  var mapFac = {};
+  var mapFac = {
+    makeKey: makeKey,
+    getMapSize: getMapSize,
+    pushPerfData: pushPerfData,
+    getPerfData: getPerfData,
+    getCurrentStreakData: getCurrentStreakData,
+    pushCurrentStreakData: pushCurrentStreakData
+  };
+  return mapFac;
 
-  mapFac.makeKey = function(habitid, dayNb){
+  function makeKey(habitid, dayNb){
     return habitid.toString()+dayNb.toString();
   };
 
-  mapFac.getMapSize = function(){
+  function getMapSize(){
     return performanceMap.length;
-  }
+  };
 
-  mapFac.pushPerfData = function(habitid, dayNb, perf){
-    
+  function pushPerfData(habitid, dayNb, perf){
     var mapkey = mapFac.makeKey(habitid, dayNb);
-    
     function findIndexVal(item){
       return (item.key.localeCompare(mapkey)==0);
     }
-    
     var index = performanceMap.findIndex(findIndexVal);
-    //console.log("index: ",index);
-    
     if (index == -1){
-      //console.log("push in performance Map -  mapkey: ",mapkey," - value: ",perf);
       performanceMap.push({key: mapkey, value: perf});
     }
     performanceMap[index] = ({key: mapkey, value: perf});
   };
 
-
-  mapFac.getPerfData = function(habitid, dayNb){
-    
+  function getPerfData(habitid, dayNb){
     var mapkey = mapFac.makeKey(habitid, dayNb);
-    
     function findval(item){
       return (item.key.localeCompare(mapkey)==0);
     }
-    
     var foundItem = performanceMap.find(findval);
-    
     if (foundItem == undefined){
       return 0;
     }
     return foundItem.value;
   };
 
-  mapFac.mafunctionadoree = function(){
-    var keyarr = [];
-    var valuearr = [];
-    performanceMap.forEach(myfunc);
-    function myfunc(item, index){
-      keyarr.push(item.key);
-      valuearr.push(item.value);
-      //console.log("key: ",item.key," - value: ",item.value);
+  function getCurrentStreakData(habitid){
+    function findval(item){
+      return (item.key.localeCompare(habitid)==0);
     }
-    console.log("ADOREE: KEYS: ",keyarr);
-    console.log("ADOREE: VALS: ",valuearr);
+    var foundItem = currentStreakArray.find(findval);
+    if(foundItem != undefined){
+      return foundItem.value;
+    }
+    else return 0;
   };
 
+  function pushCurrentStreakData(habitid, perf){
+    function findIndexVal(item){
+      return (item.key.localeCompare(habitid)==0);
+    }
+    var index = currentStreakArray.findIndex(findIndexVal);
+    if (index == -1){
+      currentStreakArray.push({key: habitid, value: perf});
+    }
+    currentStreakArray[index] = ({key: habitid, value: perf});
+  };
 
-  return mapFac;
-
-  }])
+}])
 
 
+.factory('recomputeFactory', ['authFactory', 
+'singleUsersFactory','calendarFactory','statDateFactory',
+'statisticFactory', '$state', 'mapFactory',
+function (authFactory,
+  singleUsersFactory,calendarFactory,statDateFactory,
+  statisticFactory,$state,mapFactory) {
 
-  .factory('recomputeFactory', ['$resource', 'baseURL', 'habitFactory', 'authFactory', 
-  'singleUsersFactory','calendarFactory','statDateFactory',
-  'statisticFactory', '$state', 'mapFactory',
-  function ($resource, baseURL,habitFactory,authFactory,
-    singleUsersFactory,calendarFactory,statDateFactory,
-    statisticFactory,$state,mapFactory) {
+  var getStatAndPopulateMap = getStatAndPopulateMap;
+  var calculateStreakReccurent = calculateStreakReccurent;
 
-  var recomputeFac = {};
+  var recomputeFac = {
+    generalRecompute: generalRecompute,
+    recomputeStreaks: recomputeStreaks
+  };
 
-  recomputeFac.generalRecompute = function(){
+  return recomputeFac;
 
+
+  function generalRecompute(){
     calendarFactory.compileViewDates();
     var username = authFactory.getUsername();
     singleUsersFactory.query({username: username},
-        
-      function(response){
-
+    function(response){
       var allHabits = response.habits;
-
       var arrayofdates = calendarFactory.getRealDateArray();
-
       for (var i = 0; i < allHabits.length; i++){
         var obj = allHabits[i];
-        //$scope.toRecompute[obj._id] = false;
         for (var dayNb = 0; dayNb < 7; dayNb++){
-          // var myhabitid = obj._id;
-          // var myhabitdate = dn;
-          // var myhabitkey = mapFactory.makeKey(obj._id,dn);
-          // console.log("RECOMPUTE - my HABIT KEY: ",myhabitkey);
           var statdate = statDateFactory.makeStatDate(arrayofdates[dayNb]);
-
           getStatAndPopulateMap(obj._id,statdate,dayNb,i,allHabits.length);
-
         }
-    }
-  },function(response){
-
-  });
+      }
+    },function(response){
+    });
 
   };
 
-
-
-  var getStatAndPopulateMap = function(habitid,statdate,dayNb,i,length){
+  function getStatAndPopulateMap(habitid,statdate,dayNb,i,length){
 
     statisticFactory.getStatistic().query({habitid: habitid, statdate: statdate},
       function(response){
@@ -184,7 +160,8 @@ angular.module('habitManagement', [])
               mapFactory.pushPerfData(habitid, dayNb, response.value);
               if (  (i == (length-1)) && dayNb == 6)
               {
-                console.log("!!!END OF THE RECOMPUTE - SIMPLE!!!");
+                console.log("END OF THE RECOMPUTE - SIMPLE");
+                recomputeStreaks();
                 $state.reload();
               }
           }
@@ -195,15 +172,13 @@ angular.module('habitManagement', [])
               };
               statisticFactory.getStatistic().save({habitid: habitid, statdate: statdate}, newStatistic,
                   function(response){
-                      //console.log("--> SAVE_STATE_DURING_RECOMPUTING - value: ",response.value," - date: ",statdate);
                       mapFactory.pushPerfData(habitid, dn, response.value);
-                      //mapFactory.mafunctionadoree();
-                      //$state.reload();
 
                       console.log("i: ",i," - dn: ",dayNb);
                       if (  (i == (length-1)) && dayNb == 6)
                       {
-                        console.log("!!!END OF THE RECOMPUTE - COMPLEX!!!");
+                        console.log("END OF THE RECOMPUTE - COMPLEX");
+                        recomputeStreaks();
                         $state.reload();
                       }
                   },
@@ -218,13 +193,58 @@ angular.module('habitManagement', [])
     );
   };
 
-  return recomputeFac;
+  function recomputeStreaks(){
+    console.log("RECOMPUTE STREAK");
+    var username = authFactory.getUsername();
+    singleUsersFactory.query({username: username},
+        
+      function(response){
 
-  }])
+      var allHabits = response.habits;
+      for (var i = 0; i < allHabits.length; i++){
+        var habit = allHabits[i];
+        var currentstreak = 0;
+        var currentStreak = calculateStreakReccurent(habit._id,new Date(),currentstreak);
+      }
+
+  },function(response){
+  });
+  };
+
+  function calculateStreakReccurent(habitid,date,streak){
+    var statdate = statDateFactory.makeStatDate(date);
+    var streakperf = streak;
+
+    statisticFactory.getStatistic().query({habitid: habitid, statdate: statdate},
+      function(response){
+          if (response.value != undefined){
+              if(response.value == 1){
+                streakperf++;
+                var newDate = date;
+                newDate.setDate(date.getDate()-1);
+                return streakperf + calculateStreakReccurent(habitid,newDate,streakperf);
+              }
+          }
+          if (response.value == undefined){
+            console.log("REC - GET STAT undefined - streakperf is the final current streak: ",streakperf);
+            mapFactory.pushCurrentStreakData(habitid,streakperf);
+            return 0;
+          }
+          console.log("REC - GET STAT return val 0 - streakperf is the final current streak: ",streakperf);
+          mapFactory.pushCurrentStreakData(habitid,streakperf);
+          return 0;
+      },
+      function(response){
+          //$scope.message = "Error: " + response.status + " " + response.statusText;
+      }
+    );
+  };
+
+}])
 
 
-.factory('statDateFactory', ['$resource', 'baseURL', 'moment', 
-  function ($resource, baseURL, moment) {
+.factory('statDateFactory', ['$resource', 'moment', 
+  function ($resource, moment) {
 
   var statDateFac = {};
 
@@ -235,56 +255,69 @@ angular.module('habitManagement', [])
     if(momentdate != undefined)
       return momentdate.toString();
   };
-
   return statDateFac;
-
 }])
 
-.factory('statisticFactory', ['$resource', 'baseURL',
- function ($resource, baseURL) {
 
+.factory('statisticFactory', ['$resource', 'baseURL','$rootScope',
+ function ($resource, baseURL,$rootScope) {
 
-  var statFac = {};
+  var getCurrentStreakResource = getCurrentStreakResource;
 
-  statFac.resetStatistics = function(habitid) {
-    var resource = $resource(baseURL + "habits/:habitid/statistic", {habitid:"@habitid"})
+  var statFac = {
+    resetStatistics: resetStatistics,
+    getStatistic: getStatistic,
+    getCurrentStreak: getCurrentStreak,
+    updateCurrentStreak: updateCurrentStreak
+  };
+
+  return statFac;
+
+  function resetStatistics(habitid) {
+    $resource(baseURL + "habits/:habitid/statistic", {habitid:"@habitid"})
       .delete({habitid: habitid},null,function(response){
-        $state.reload();
+        $rootScope.$broadcast('recomputeDaysPerf');
       });
   };
 
-  statFac.getStatistic = function(){
-    
-    //console.log("getStatistic in StatisticFactory");
+  function getStatistic(){
     return $resource(baseURL + "habits/:habitid/statistic/:statdate", 
-      null,//{habitid:"@habitid", statdate: "@statdate"},
+      null,
       {'update': {method: 'PUT'},
       'save': {method: 'POST'},
       'query': {method:'GET', isArray:false}
     });
   };
 
-  return statFac;
+  function getCurrentStreak(habitid) {
+    statFac.getCurrentStreakResource().query({habitid: habitid},null,function(response){
+      console.log("GET CURRENT STREAK SUCCESSFUL: ",response);
+      return response;
+    })
+  };
+
+  function updateCurrentStreak(habitid,streaknb) {
+    statFac.getCurrentStreakResource().update({habitid: habitid, streaknb: streaknb},null,function(response){
+      console.log("UPDATE CURRENT STREAK SUCCESSFUL");
+    })
+  };
+
+  function getCurrentStreakResource(){
+    return $resource(baseURL + "habits/:habitid/currentstreak/:streaknb",
+      null,
+      {'update': {method: 'PUT'},
+      'query': {method: 'GET', isArray:false}
+    });
+  };
 
 }])
 
-
-.factory('multiUsersFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
-  return $resource(baseURL + "users/:username", null, {
-      'update': {
-          method: 'PUT'
-      }
-  });
-}])
 
 .factory('singleUsersFactory', ['$resource', 'baseURL', function ($resource, baseURL) {
 
-
   return $resource(baseURL + "users/:username", null, {
-      'update': {
-          method: 'PUT'
-      },
       'query':  {method:'GET', isArray:false}
   });
+  
 }])
 ;

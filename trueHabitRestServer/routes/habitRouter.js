@@ -79,6 +79,53 @@ habitRouter.route('/:habitid')//route('/:userid/removehabit/:habitid')
     
 });
 
+habitRouter.route('/:habitid/beststreak/:streaknb')
+
+.get(Verify.verifyOrdinaryUser, function(req, res, next){
+    console.log("-- -- -- GET BEST STREAK CALLED");
+    Habits.findById(req.params.habitid, function(err, habit){
+        if (err) next(err);
+        res.json(habit.beststreak);
+    });
+})
+
+.put(Verify.verifyOrdinaryUser, function(req, res, next){
+    console.log("-- -- -- PUT BEST STREAK CALLED");
+    Habits.findById(req.params.habitid,function(err, habit){
+        if (err) next(err);
+        habit.beststreak = req.params.streaknb;
+        habit.save(function(err, habit){
+            if (err) next(err);
+            console.log("updated habit with new best streak");
+            res.json(habit.beststreak);
+        })
+    });
+});
+
+habitRouter.route('/:habitid/currentstreak/:streaknb')
+
+.get(Verify.verifyOrdinaryUser, function(req, res, next){
+    console.log("-- -- -- GET CURRENT STREAK CALLED: ");
+    Habits.findById(req.params.habitid, function(err, habit){
+        if (err) next(err);
+        res.json(habit.currentstreak);
+    });
+})
+
+.put(Verify.verifyOrdinaryUser, function(req, res, next){
+    console.log("-- -- -- PUT CURRENT STREAK CALLED");
+    Habits.findById(req.params.habitid,function(err, habit){
+        if (err) next(err);
+        habit.currentstreak = req.params.streaknb;
+        habit.save(function(err, habit){
+            if (err) next(err);
+            console.log("updated habit with new current streak");
+            res.json(habit.currentstreak);
+        })
+    });
+});
+
+
 habitRouter.route('/:habitid/statistic')
 
 .delete(Verify.verifyOrdinaryUser, function(req, res, next){
@@ -88,15 +135,12 @@ habitRouter.route('/:habitid/statistic')
         if (habit.statistics.length != 0){
             console.log("RESET - habit.statistics.length is not null");
             habit.statistics = [];
-            habit.save(function(err, habit){
+            habit.save(function (err, resp) {
                 if (err) next(err);
-                console.log("RESET - updated habit with empty statistics");
-                res.writeHead(200, {
-                    'Content-Type': 'text/plain'
-                });
+                res.json(resp);
             });
         }
-    })
+    });
 })
 
 .post(Verify.verifyOrdinaryUser, function(req, res, next){
@@ -151,18 +195,7 @@ habitRouter.route('/:habitid/statistic/:statdate')
             });
         }
         }
-        // var mastat = habit.statistics.statdate;
-        // console.log("la stat a retourner: ",mastat);
-        // res.json(habit.statistics[req.params.commentId]);
-        // console.log("habit.statistic with right date: ",habit.statistics[statdate]);
-
     );
-
-    // Habits.findById(req.params.habitid, function(err, habit){
-    //     if (err) next(err);
-    //     console.log("found the habit: ",habit);
-    //     habit.statistics.
-    // }
 
 })
 

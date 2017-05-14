@@ -3,10 +3,9 @@
 angular.module('DashboardCtrl', [])
 
 
-
-.controller('AddHabitCtrl', ['$scope', 'moment', 'ngDialog', 'newHabitFactory',
+.controller('AddHabitCtrl', ['$scope', 'moment', 'ngDialog', 'habitFactory',
     'authFactory', 
-    function ($scope, moment, ngDialog, newHabitFactory,
+    function ($scope, moment, ngDialog, habitFactory,
         authFactory) {
     
     var vm = $scope;
@@ -18,38 +17,63 @@ angular.module('DashboardCtrl', [])
     };
 
     $scope.addNewHabit = function() {
-        newHabitFactory.addHabit(vm.newHabit);
+        habitFactory.addHabit(vm.newHabit);
         ngDialog.close();
     };
 }])
 
-.controller('DashboardCtrl', ['$scope', '$rootScope', 
-    'moment', 'ngDialog', '$state', '$stateParams', 
-    '$localStorage', 'authFactory', 'habitFactory', 
-    'singleUsersFactory', 'multiUsersFactory', 'statisticFactory',
+.controller('DashboardCtrl', ['$scope', '$rootScope', 'moment', 'ngDialog', '$state', 
+    'authFactory', 'habitFactory', 'singleUsersFactory', 'statisticFactory',
     'calendarFactory', 'mapFactory', 'weeklyScoreFactory',
     'statDateFactory', 'recomputeFactory',
-    function ($scope, $rootScope, 
-        moment, ngDialog, $state, $stateParams, 
-        $localStorage, authFactory, habitFactory, 
-        singleUsersFactory, multiUsersFactory, statisticFactory,
+    function ($scope, $rootScope, moment, ngDialog, $state, 
+        authFactory, habitFactory, singleUsersFactory, statisticFactory,
         calendarFactory, mapFactory,weeklyScoreFactory,
         statDateFactory,recomputeFactory) {
 
     
-    singleUsersFactory.query({username: authFactory.getUsername()},
+    calendarFactory.compileViewDates();
+    retrieveAllHabits();
+    var realDateArray = calendarFactory.getRealDateArray();
+    var isToday = calendarFactory.getIsTodayArr();
+
+    $scope.isButtonDisabled     = isButtonDisabled;
+    $scope.isdone               = isdone;
+    $scope.getCurrentStreak     = getCurrentStreak;
+    $scope.openAddHabit         = openAddHabit;
+    $scope.isDayPerf            = isDayPerf;
+    $scope.removeHabit          = removeHabit;
+    $scope.resetHabit           = resetHabit;
+    $scope.viewStatistics       = viewStatistics;
+    $scope.switchState          = switchState;
+    $scope.isItToday            = isItToday;
+    $scope.previousWeek         = previousWeek; 
+    $scope.nextWeek             = nextWeek;
+    $scope.todaysWeek           = todaysWeek;
+    $scope.viewDate             = calendarFactory.getCurrentViewDate();
+
+    console.log("!!! VIEW DATE!!! ",$scope.viewDate);
+
+    $scope.displayDateArray = calendarFactory.getDisplayDateArr();
+
+    $scope.$on('recomputeDaysPerf', function () {
+        console.log("!BROADCAST DETECTED!")
+        recomputeFactory.generalRecompute();
+    });
+
+    function retrieveAllHabits()
+    {
+        singleUsersFactory.query({username: authFactory.getUsername()},
         function(response){
             $scope.allHabits = response.habits;
-            $scope.weeklyScore = weeklyScoreFactory.computeWeeklyScore($scope.allHabits);
+            $scope.weeklyScore = weeklyScoreFactory.computeWeeklyScore(response.habits);
         },
         function(response){
           //exception management
         });
-    calendarFactory.compileViewDates();
-    var realDateArray = calendarFactory.getRealDateArray();
-    var isToday = calendarFactory.getIsTodayArr();
+    }
 
-    $scope.isButtonDisabled = function(dayNb)
+    function isButtonDisabled(dayNb)
     {
         return (calendarFactory.isWeekCurrent() && (dayNb > calendarFactory.getTodayDayNb()));
     }
@@ -60,37 +84,38 @@ angular.module('DashboardCtrl', [])
         recomputeFactory.generalRecompute();
     }
 
-    // $scope variables because used in child scope AddNewHabitCtrl - not used in Dashboard view.
-    //$scope.user_id = authFactory.getUserId();
-    //$scope.username = authFactory.getUsername();
-
-    $scope.displayDateArray = calendarFactory.getDisplayDateArr();
-
-    //console.log("real date array: ",realDateArray);
-
-    $scope.isdone = function(habitid, dayNb){
-        return ((mapFactory.getPerfData(habitid, dayNb) == 1) );//&& (!isButtonDisabled(dayNb)) );
+    function isdone(habitid, dayNb){
+        return ((mapFactory.getPerfData(habitid, dayNb) == 1) );
     }
+    function getCurrentStreak(habitid) {
+        return mapFactory.getCurrentStreakData(habitid);
+    }
+
+    function isDayPerf(habitid, dayNb) {
+        return mapFactory.getPerfData(habitid, dayNb);
+    };
     
-    $scope.isDayPerf = function (habitid, dayNb) {
-        // if(dayNb == 6){
-        //     mapFactory.mafunctionadoree();
-        // }
-        return value = mapFactory.getPerfData(habitid, dayNb);
-        //if(value == 0) return false;
-        //if(value == 1) return true;
+    function openAddHabit(){
+        if($scope.allHabits != undefined){
+            var nbHabits = $scope.allHabits.length;
+            if (nbHabits<5){
+                ngDialog.open({ 
+                    template: 'views/addHabit.html', 
+                    scope: $scope, 
+                    className: 'ngdialog-theme-default', 
+                    controller:"AddHabitCtrl" 
+                });
+            }
+            else if (nbHabits>=5){
+                ngDialog.open({
+                    template: 'views/maxHabitModal.html',
+                    className: 'ngdialog-theme-default'
+                });
+            }
+        }
     };
 
-    $scope.openAddHabit = function () {
-        ngDialog.open({ 
-            template: 'views/addHabit.html', 
-            scope: $scope, 
-            className: 'ngdialog-theme-default', 
-            controller:"AddHabitCtrl" 
-        });
-    };
-
-    $scope.removeHabit = function (habitid) {
+    function removeHabit(habitid) {
         ngDialog.openConfirm({
             template: 'views/removeHabitModal.html',
             className: 'ngdialog-theme-default'
@@ -100,7 +125,7 @@ angular.module('DashboardCtrl', [])
         });
     };
 
-    $scope.resetHabit = function (habitid) {
+    function resetHabit(habitid) {
         ngDialog.openConfirm({
             template: 'views/resetHabitModal.html',
             className: 'ngdialog-theme-default'
@@ -110,16 +135,16 @@ angular.module('DashboardCtrl', [])
         });
     };
 
-    $scope.viewStatistics = function (habitid) {
+
+    function viewStatistics(habitid) {
         ngDialog.open({
             template: '<h4>View Statistics</h4><p>Feature coming soon</p>',
             plain: true
         });
     };
 
-    $scope.switchState = function(habitid, dayNb){
 
-
+    function switchState(habitid, dayNb){
         var statdate = statDateFactory.makeStatDate(realDateArray[dayNb]);
         console.log("SWITCH_STATE: statdate from statDateFactory: ",statdate);
 
@@ -138,7 +163,7 @@ angular.module('DashboardCtrl', [])
             function(response){
                 console.log("--> SWITCH_STATE - value: ",response.value," - date: ",statdate);
                 mapFactory.pushPerfData(habitid, dayNb, response.value);
-                mapFactory.mafunctionadoree();
+                recomputeFactory.generalRecompute();
                 $state.reload();
             },
             function(response){
@@ -146,7 +171,8 @@ angular.module('DashboardCtrl', [])
         );
     };
 
-    $scope.isItToday = function(val)
+
+    function isItToday(val)
     {
         if(calendarFactory.isWeekCurrent())
         {
@@ -154,13 +180,12 @@ angular.module('DashboardCtrl', [])
         }
     };
 
-    $scope.previousWeek = function()
+    function previousWeek()
     {
-        calendarFactory.lastWeek();
-        calendarFactory.setIsWeekCurrent(false);
-        $state.reload();
+        $scope.lastWeekWarning = (calendarFactory.lastWeek() == false);
     };
-    $scope.nextWeek = function()
+
+    function nextWeek()
     {
         var myLocalDateArray = realDateArray;
         var todaysmoment = moment().startOf('day');
@@ -180,20 +205,13 @@ angular.module('DashboardCtrl', [])
         }
     };
     
-    $scope.todaysWeek = function()
+    function todaysWeek()
     {
         calendarFactory.setIsWeekCurrent(true);
         calendarFactory.todaysWeek();
         console.log("CALENDAR FACTORY - SET WEEK IS CURRENT - TRUE");
         console.log("today's week");
     };
-
-    $scope.$on('recomputeDaysPerf', function () {
-        console.log("!BROADCAST DETECTED!")
-        recomputeFactory.generalRecompute();
-    });
-    
-
 
 }])
 
