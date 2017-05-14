@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('accountManagement', [])
-.constant("baseURL", "https://localhost:3443/")
+//.constant("baseURL", "https://localhost:3443/")
+.constant("baseURL", "https://truehabit.mybluemix.net:8523/")
 
 .factory('$localStorage', ['$window', function ($window) {
     return {

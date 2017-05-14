@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('habitManagement', [])
-.constant("baseURL", "https://localhost:3443/")
+//.constant("baseURL", "https://localhost:3443/")
+.constant("baseURL", "https://truehabit.mybluemix.net:8523/")
 
 .factory('habitFactory', ['$resource', '$state', 'baseURL', '$rootScope',
  function ($resource, $state, baseURL,$rootScope) {

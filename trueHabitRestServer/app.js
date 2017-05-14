@@ -10,7 +10,7 @@ var authenticate = require('./authenticate');
 
 var config = require('./config');
 
-mongoose.connect(config.mongoUrl);
+mongoose.connect(config.mongoUrl);// || 'mongodb://localhost:27017/trueHabit');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
@@ -41,6 +41,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
+// app.use(function (req, res, next) {
+//     //headers that enable corse
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH');
+//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//     next();
+// });
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -84,7 +92,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.json({
     message: err.message,
-    error: {}
+    error: err
+    //error: {}
   });
 });
 

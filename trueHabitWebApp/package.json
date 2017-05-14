@@ -1,6 +1,6 @@
 {
-  "name": "conFusion",
-  "private": true,
+  "name": "trueHabit",
+  "private": false,
   "devDependencies": {
     "browser-sync": "^2.10.0",
     "del": "^2.0.2",
